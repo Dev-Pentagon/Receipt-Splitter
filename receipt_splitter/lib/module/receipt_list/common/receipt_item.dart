@@ -15,9 +15,13 @@ class ReceiptItem extends StatelessWidget {
         Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(receipt.name),
+            Text(receipt.name, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface
+            ),),
             SizedBox(height: 8,),
-            Text(DateTimeService.dayMonthYear(receipt.date)),
+            Text(DateTimeService.dayMonthYear(receipt.date), style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant
+            )),
           ],
         )),
         IconButton(
