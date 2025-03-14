@@ -20,7 +20,7 @@ class Routes {
       GoRoute(name: ReceiptFormScreen.receiptForm, path: '/receiptForm', builder: (context, state) =>
           BlocProvider(
             create: (context) => ReceiptTypeCubit(),
-            child: ReceiptFormScreen(isNew: state.extra as bool,),
+            child: ReceiptFormScreen(isNew: state.extra as bool?,),
           )),
     ],
   );
