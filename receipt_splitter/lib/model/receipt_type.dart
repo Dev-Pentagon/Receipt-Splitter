@@ -1,0 +1,1 @@
+enum ReceiptType { inclusive, exclusive }

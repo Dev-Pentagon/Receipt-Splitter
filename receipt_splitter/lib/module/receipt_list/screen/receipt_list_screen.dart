@@ -11,7 +11,7 @@ import 'package:receipt_splitter/services/dialog_service.dart';
 class ReceiptListScreen extends StatelessWidget {
   ReceiptListScreen({super.key});
 
-  static const String receiptSplit = '/receipt-split';
+  static const String receiptSplit = '/receiptSplit';
 
   final List<Receipt> receipt = [Receipt(id: 1, name: 'The Radio Bar', date: DateTime(2025, 3, 7)), Receipt(id: 2, name: 'The Lord', date: DateTime(2024, 12, 8))];
   final List<Receipt> receipt2 = [];
