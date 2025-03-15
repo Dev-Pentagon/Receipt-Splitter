@@ -6,6 +6,7 @@ const String CANCEL = 'Cancel';
 const String DELETE = 'Delete';
 const String CREATE_RECEIPT = 'Create Receipt';
 const String EDIT_RECEIPT = 'Edit Receipt';
+const String QTY = 'QTY';
 const String NAME = 'Name';
 const String DATE = 'Date';
 const String TOTAL = 'Total';
@@ -16,6 +17,9 @@ const String EXCLUSIVE = 'Exclusive';
 const String PARTICIPANTS = 'Participants';
 const String ITEMS = 'Items';
 const String ADD_ITEM = 'Add';
+const String NO_PARTICIPANTS = 'No Participants';
+const String ALL = 'All';
+const String PEOPLE = 'People';
 
 
 String deleteReceiptMessage(String receiptName) {

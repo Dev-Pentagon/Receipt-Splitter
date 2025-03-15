@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/common/custom_radio_button.dart';
 import 'package:receipt_splitter/common/custom_text_field_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/receipt_type.dart';
 import 'package:receipt_splitter/module/receipt_detail/cubit/receipt_form_cubit/receipt_type_cubit.dart';
 import 'package:receipt_splitter/services/date_time_service.dart';
+
+import 'items_and_people_screen.dart';
 
 class ReceiptFormScreen extends StatefulWidget {
   const ReceiptFormScreen({super.key, this.isNew});
@@ -89,7 +92,18 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
               color: Theme.of(context).colorScheme.surfaceContainer,
               width: double.infinity,
               height: 80,
-              child: Row(children: [IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)), Spacer(), FloatingActionButton(onPressed: () {}, child: Icon(Icons.arrow_forward))]),
+              child: Row(
+                children: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)),
+                  Spacer(),
+                  FloatingActionButton(
+                    onPressed: () {
+                      context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople);
+                    },
+                    child: Icon(Icons.arrow_forward),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
