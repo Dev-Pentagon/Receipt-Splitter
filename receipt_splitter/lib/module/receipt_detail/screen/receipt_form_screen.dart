@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/common/custom_radio_button.dart';
 import 'package:receipt_splitter/common/custom_text_field_widget.dart';
+import 'package:receipt_splitter/common/layout_builder_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/tax_type.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participants_item_widget.dart';
@@ -53,12 +54,11 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
           DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {});
         }, icon: Icon(Icons.delete))],
       ),
-      body: Form(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Column(
+      body: LayoutBuilderWidget(
+        child: Form(
+          child: Column(
+            children: [
+              Column(
                 children: [
                   CustomTextFieldWidget(label: NAME),
                   CustomSpaceWidget(),
@@ -93,30 +93,32 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
                   ),
                 ],
               ),
-            ),
-            isNew ? Spacer() : SizedBox.shrink(),
-            isNew
-                ? Container(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  width: double.infinity,
-                  height: 80,
-                  child: Row(
-                    children: [
-                      IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)),
-                      Spacer(),
-                      FloatingActionButton(
-                        onPressed: () {
-                          context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople);
-                        },
-                        child: Icon(Icons.arrow_forward),
-                      ),
-                    ],
-                  ),
-                )
-                : Expanded(child: ParticipantsItemWidget()),
-          ],
+              isNew
+                  ? SizedBox.shrink()
+                  : Expanded(child: ParticipantsItemWidget()),
+            ],
+          ),
         ),
       ),
+      bottomNavigationBar: isNew
+          ? Container(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              width: double.infinity,
+              height: 80,
+              child: Row(
+                children: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)),
+                  Spacer(),
+                  FloatingActionButton(
+                    onPressed: () {
+                      context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople);
+                    },
+                    child: Icon(Icons.arrow_forward),
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 }

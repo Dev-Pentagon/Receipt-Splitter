@@ -4,7 +4,7 @@ import 'package:receipt_splitter/common/custom_text_field_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/menu_item.dart';
 import 'package:receipt_splitter/model/participant.dart';
-import 'package:receipt_splitter/module/receipt_detail/common/participant_avatar.dart';
+import 'package:receipt_splitter/module/receipt_detail/common/participant_list_view.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/table_widget.dart';
 
 class ParticipantsItemWidget extends StatefulWidget {
@@ -219,22 +219,11 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
   }
 
   Widget _buildParticipantsListView(List<Participant> participants, String tab) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ListView.separated(
-        itemBuilder:
-            (context, index) => Row(
-              children: [
-                ParticipantAvatar(participant: participants[index], width: 40, height: 40),
-                SizedBox(width: 16),
-                Text(participants[index].name),
-                Spacer(),
-                IconButton(icon: const Icon(Icons.edit), onPressed: () => _showEditBottomSheet<Participant>(data: participants[index], index: index)),
-              ],
-            ),
-        separatorBuilder: (context, index) => Divider(),
-        itemCount: participants.length,
-      ),
+    return ParticipantListView(
+      participants: participants,
+      icon: const Icon(Icons.edit),
+      action: (index) => _showEditBottomSheet<Participant>(data: participants[index], index: index),
+      physics: const AlwaysScrollableScrollPhysics(),
     );
   }
 }
