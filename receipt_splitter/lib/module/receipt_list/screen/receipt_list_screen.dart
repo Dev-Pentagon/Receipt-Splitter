@@ -86,7 +86,7 @@ class ReceiptListScreen extends StatelessWidget {
                 onPressed: () {
                   context.read<FabCubit>().toggle(); // Toggle the state of the FABs
                 },
-                backgroundColor: state ? Theme.of(context).colorScheme.primaryFixedDim : Theme.of(context).colorScheme.primaryContainer,
+                backgroundColor: state ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primaryContainer,
                 child: Icon(state ? Icons.close : Icons.arrow_upward_outlined),
               ),
             ],

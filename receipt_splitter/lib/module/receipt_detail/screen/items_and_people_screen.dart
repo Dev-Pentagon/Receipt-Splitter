@@ -54,7 +54,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('The Radio Bar'), actions: [IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () {})]),
+      appBar: AppBar(title: const Text('The Radio Bar'), centerTitle: true, actions: [IconButton(icon: const Icon(Icons.edit_outlined), onPressed: () {})]),
       body: LayoutBuilderWidget(
         child: Column(
           children: [

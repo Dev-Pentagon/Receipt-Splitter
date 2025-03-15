@@ -28,7 +28,7 @@ class ParticipantAvatar extends StatelessWidget {
         backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.tertiary,
         child:
             participant.name == ALL
-                ? const Icon(Icons.group, color: Colors.white)
+                ? Icon(Icons.group, color: Theme.of(context).colorScheme.onTertiary, size: 24)
                 : Text(participant.name.getInitials, style: textStyle ?? Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary), overflow: TextOverflow.ellipsis,),
       ),
     );

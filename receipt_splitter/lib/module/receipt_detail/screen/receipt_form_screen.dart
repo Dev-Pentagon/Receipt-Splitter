@@ -50,9 +50,16 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
       appBar: AppBar(
         title: Text(isNew ? CREATE_RECEIPT : EDIT_RECEIPT, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
         centerTitle: true,
-        actions: [isNew ? SizedBox.shrink() : IconButton(onPressed: () {
-          DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {});
-        }, icon: Icon(Icons.delete))],
+        actions: [
+          isNew
+              ? SizedBox.shrink()
+              : IconButton(
+                onPressed: () {
+                  DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {});
+                },
+                icon: Icon(Icons.delete),
+              ),
+        ],
       ),
       body: LayoutBuilderWidget(
         child: Form(
@@ -93,32 +100,31 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
                   ),
                 ],
               ),
-              isNew
-                  ? SizedBox.shrink()
-                  : Expanded(child: ParticipantsItemWidget()),
+              isNew ? SizedBox.shrink() : Expanded(child: ParticipantsItemWidget()),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: isNew
-          ? Container(
-              color: Theme.of(context).colorScheme.surfaceContainer,
-              width: double.infinity,
-              height: 80,
-              child: Row(
-                children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)),
-                  Spacer(),
-                  FloatingActionButton(
-                    onPressed: () {
-                      context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople);
-                    },
-                    child: Icon(Icons.arrow_forward),
-                  ),
-                ],
-              ),
-            )
-          : null,
+      bottomNavigationBar:
+          isNew
+              ? Container(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                width: double.infinity,
+                height: 80,
+                child: Row(
+                  children: [
+                    IconButton(onPressed: () {}, icon: Icon(Icons.replay_outlined)),
+                    Spacer(),
+                    FloatingActionButton(
+                      onPressed: () {
+                        context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople);
+                      },
+                      child: Icon(Icons.arrow_forward),
+                    ),
+                  ],
+                ),
+              )
+              : null,
     );
   }
 }
