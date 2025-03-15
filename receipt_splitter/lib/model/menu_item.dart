@@ -3,13 +3,14 @@ class MenuItem {
   final String name;
   final int quantity;
   final double price;
-  final double? total;
+  double? total;
 
   MenuItem({
     required this.id,
     required this.name,
     required this.quantity,
     required this.price,
-    this.total,
-  });
+  }) : total = _calculateTotalAmount(price, quantity);
+
+  static double _calculateTotalAmount(double price, int quantity) => price * quantity;
 }
