@@ -3,7 +3,7 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${substring(1)}";
   }
 
-  String getInitials() {
+  String get getInitials {
     // Split the name into words
     List<String> words = trim().split(' ');
 
@@ -12,5 +12,4 @@ extension StringExtension on String {
 
     return initials;
   }
-
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_splitter/config/app_config.dart';
 import 'package:receipt_splitter/model/menu_item.dart';
+import 'package:receipt_splitter/model/participant.dart';
 
 import '../../../constants/strings.dart';
 
@@ -43,59 +44,40 @@ class TableWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: columnWithPadding(
-                  child: Text(actionName, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
+                  child: Text(actionName, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant), textAlign: TextAlign.end),
                   vertical: 0,
                 ),
               ),
             ],
           ),
-          const Divider(),
-      
+          const SizedBox(height: 8.0),
+          const Divider(height: 1),
+
           // List Items (Scrollable)
           Expanded(
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-                return Column(
-                  children: [
-                    Row(
+                return DragTarget<Participant>(
+                  builder: (context, candidateItems, rejectedItems) {
+                    return Column(
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: columnWithPadding(
-                            child: Text(
-                              qtyFormatter.format(item.quantity),
-                              style: Theme.of(context).textTheme.labelSmall,
-                              textAlign: TextAlign.end,
-                            ),
+                        Container(
+                          decoration: BoxDecoration(color: candidateItems.isNotEmpty ? Theme.of(context).colorScheme.surfaceContainer : null),
+                          child: Row(
+                            children: [
+                              Expanded(flex: 1, child: columnWithPadding(child: Text(qtyFormatter.format(item.quantity), style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.end))),
+                              Expanded(flex: 3, child: columnWithPadding(child: Text(item.name, style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.start))),
+                              Expanded(flex: 2, child: columnWithPadding(child: Text(amountFormatter.format(item.total), style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.center))),
+                              Expanded(flex: 2, child: actionWidget(index)),
+                            ],
                           ),
                         ),
-                        Expanded(
-                          flex: 3,
-                          child: columnWithPadding(
-                            child: Text(
-                              item.name,
-                              style: Theme.of(context).textTheme.labelSmall,
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: columnWithPadding(
-                            child: Text(
-                              amountFormatter.format(item.total),
-                              style: Theme.of(context).textTheme.labelSmall,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(flex: 2, child: actionWidget(index)),
+                        const Divider(height: 1),
                       ],
-                    ),
-                    const Divider(),
-                  ],
+                    );
+                  },
                 );
               },
             ),
@@ -105,7 +87,7 @@ class TableWidget extends StatelessWidget {
     );
   }
 
-  Widget columnWithPadding({required Widget child, double vertical = 20.0, double horizontal = 8.0}) {
+  Widget columnWithPadding({required Widget child, double vertical = 15.0, double horizontal = 8.0}) {
     return Padding(padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical), child: child);
   }
 }

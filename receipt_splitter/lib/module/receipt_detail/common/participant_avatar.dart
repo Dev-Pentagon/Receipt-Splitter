@@ -4,28 +4,32 @@ import 'package:receipt_splitter/extension/string_extension.dart';
 import 'package:receipt_splitter/model/participant.dart';
 
 class ParticipantAvatar extends StatelessWidget {
-  const ParticipantAvatar({
-    super.key,
-    required this.participant,  this.width = 75,  this.height = 75, this.radius = 24
-  });
+  const ParticipantAvatar({super.key, required this.participant, this.width = 75, this.height = 75, this.radius = 24, this.textStyle, this.backgroundColor, this.border});
 
   final Participant participant;
   final double width;
   final double height;
   final double radius;
+  final TextStyle? textStyle;
+  final Color? backgroundColor;
+  final BoxBorder? border;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: height,
       width: width,
+      decoration: BoxDecoration(
+        border: border,
+        borderRadius: BorderRadius.circular(radius),
+      ),
       child: CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.tertiary,
         child:
-        participant.name == ALL
-            ? const Icon(Icons.group, color: Colors.white)
-            : Text(participant.name.getInitials(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+            participant.name == ALL
+                ? const Icon(Icons.group, color: Colors.white)
+                : Text(participant.name.getInitials, style: textStyle ?? Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary), overflow: TextOverflow.ellipsis,),
       ),
     );
   }
