@@ -6,6 +6,7 @@ import 'package:receipt_splitter/model/receipt.dart';
 import '../../../common/layout_builder_widget.dart';
 import '../../../model/participant.dart';
 import '../common/participant_card.dart';
+import '../common/participant_stack_widget.dart';
 import '../common/table_widget.dart';
 
 class ItemsAndPeopleScreen extends StatelessWidget {
@@ -36,6 +37,9 @@ class ItemsAndPeopleScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(child: TableWidget(items: items, actionName: PEOPLE, actionWidget: const Icon(Icons.delete))),
+            // ParticipantStackWidget(
+            //   participants: participants,
+            // )
             const Divider(),
             SingleChildScrollView(
               padding: const EdgeInsets.only(top: 15.0),

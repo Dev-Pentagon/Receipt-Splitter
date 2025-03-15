@@ -68,7 +68,7 @@ class TableWidget extends StatelessWidget {
     );
   }
 
-  Widget columnWithPadding({required Widget child, double vertical = 20.0, double horizontal = 8.0}) {
+  Widget columnWithPadding({required Widget child, double vertical = 15.0, double horizontal = 8.0}) {
     return Padding(padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical), child: child);
   }
 }
