@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:receipt_splitter/extension/string_extension.dart';
 import 'package:receipt_splitter/model/participant.dart';
+import 'package:receipt_splitter/module/receipt_detail/common/participant_avatar.dart';
 
-import '../../../constants/strings.dart';
 
 class ParticipantCard extends StatelessWidget {
   final Participant participant;
@@ -18,18 +17,7 @@ class ParticipantCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 75,
-            width: 75,
-            child: CircleAvatar(
-              radius: 24,
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              child:
-                  participant.name == ALL
-                      ? const Icon(Icons.group, color: Colors.white)
-                      : Text(participant.name.getInitials(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-            ),
-          ),
+          ParticipantAvatar(participant: participant),
           const SizedBox(height: 6),
           Text(participant.name, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface, overflow: TextOverflow.ellipsis)),
         ],

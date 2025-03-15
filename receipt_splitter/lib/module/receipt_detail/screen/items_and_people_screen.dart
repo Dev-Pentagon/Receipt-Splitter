@@ -35,7 +35,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
       body: LayoutBuilderWidget(
         child: Column(
           children: [
-            Expanded(child: TableWidget(items: items, actionName: PEOPLE, actionWidget: const Icon(Icons.delete))),
+            Expanded(child: TableWidget(items: items, actionName: PEOPLE, actionWidget: (val) => const Icon(Icons.delete))),
             const Divider(),
             SingleChildScrollView(
               padding: const EdgeInsets.only(top: 15.0),

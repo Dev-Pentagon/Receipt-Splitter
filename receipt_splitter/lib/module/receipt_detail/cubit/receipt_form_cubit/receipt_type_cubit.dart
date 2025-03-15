@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:receipt_splitter/model/receipt_type.dart';
+import 'package:receipt_splitter/model/tax_type.dart' show TaxType;
 
-class ReceiptTypeCubit extends Cubit<ReceiptType> {
-  ReceiptTypeCubit() : super(ReceiptType.inclusive);
+class ReceiptTypeCubit extends Cubit<TaxType> {
+  ReceiptTypeCubit() : super(TaxType.inclusive);
 
   void toggle() {
-    emit(state == ReceiptType.inclusive ? ReceiptType.exclusive : ReceiptType.inclusive);
+    emit(state == TaxType.inclusive ? TaxType.exclusive : TaxType.inclusive);
   }
 }

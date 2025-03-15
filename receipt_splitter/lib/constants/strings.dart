@@ -20,6 +20,10 @@ const String ADD_ITEM = 'Add';
 const String NO_PARTICIPANTS = 'No Participants';
 const String ALL = 'All';
 const String PEOPLE = 'People';
+const String ACTION = 'Action';
+const String DELETE_RECEIPT_MESSAGE = "The receipt will be permanently deleted after 30 days.";
+const String PRICE = 'Price';
+const String SAVE = 'Save';
 
 
 String deleteReceiptMessage(String receiptName) {

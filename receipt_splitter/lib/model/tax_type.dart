@@ -1,0 +1,1 @@
+enum TaxType { inclusive, exclusive }
