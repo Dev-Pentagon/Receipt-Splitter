@@ -13,7 +13,7 @@ class Routes {
   static const String splash = '/';
 
   static final GoRouter router = GoRouter(
-    initialLocation: ItemsAndPeopleScreen.itemsAndPeople,
+    initialLocation: ReceiptFormScreen.receiptForm,
     debugLogDiagnostics: true,
     navigatorKey: navigatorKey,
     routes: <RouteBase>[

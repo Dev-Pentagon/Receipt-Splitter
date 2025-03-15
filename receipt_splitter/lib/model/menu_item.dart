@@ -5,16 +5,31 @@ class MenuItem {
   final String name;
   final int quantity;
   final double price;
-  double? total;
-  List<Participant> participants;
+  final double total;
+  final List<Participant> participants;
 
   MenuItem({
     required this.id,
     required this.name,
     required this.quantity,
     required this.price,
-    this.participants = const [],
-  }) : total = _calculateTotalAmount(price, quantity);
+    List<Participant>? participants,
+  })  : participants = participants ?? [],
+        total = price * quantity; // Calculate total correctly
 
-  static double _calculateTotalAmount(double price, int quantity) => price * quantity;
+  MenuItem copyWith({
+    int? id,
+    String? name,
+    int? quantity,
+    double? price,
+    List<Participant>? participants,
+  }) {
+    return MenuItem(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      participants: participants ?? List.from(this.participants), // Prevent list mutation issues
+    );
+  }
 }
