@@ -51,11 +51,20 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                   return TableWidget(
                     items: receipt.items,
                     actionName: PEOPLE,
-                    actionWidget: (val) => ParticipantStackWidget(menuItem: receipt.items[val]),
+                    actionWidget:
+                        (val) => BlocProvider(
+                          create: (context) => context.read<ItemsAndPeopleCubit>(),
+                          child: ParticipantStackWidget(
+                            menuItem: receipt.items[val],
+                            onParticipantDelete: (participant) {
+                              BlocProvider.of<ItemsAndPeopleCubit>(context).removeParticipant(items: receipt.items, itemId: receipt.items[val].id, participant: participant);
+                            },
+                          ),
+                        ),
                     enableDragTarget: true,
                     onItemDropped: (details, item) {
                       Participant participant = details.data;
-                      context.read<ItemsAndPeopleCubit>().linkParticipantToItem(items: receipt.items, participant: participant, itemId: item.id);
+                      BlocProvider.of<ItemsAndPeopleCubit>(context).linkParticipantToItem(items: receipt.items, participants: receipt.participants, participant: participant, itemId: item.id);
                     },
                   );
                 },

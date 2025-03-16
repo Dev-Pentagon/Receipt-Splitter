@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipt_splitter/model/menu_item.dart';
 import 'package:receipt_splitter/model/participant.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participant_avatar.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participant_list_view.dart';
+import 'package:receipt_splitter/module/receipt_detail/cubit/items_and_people_cubit/items_and_people_cubit.dart';
 import 'package:receipt_splitter/services/dialog_service.dart';
 
 class ParticipantStackWidget extends StatelessWidget {
   final MenuItem menuItem;
-  const ParticipantStackWidget({super.key, required this.menuItem});
+  final Function(Participant participant) onParticipantDelete;
+  const ParticipantStackWidget({super.key, required this.menuItem, required this.onParticipantDelete});
 
   // Offset between each circle
   final double offset = 15.0;
@@ -23,7 +26,7 @@ class ParticipantStackWidget extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () {
-          DialogService.customDialog(context, ParticipantOfItemDialog(item: menuItem));
+          DialogService.customDialog(context, ParticipantOfItemDialog(item: menuItem, onParticipantDelete: onParticipantDelete, itemsAndPeopleCubit: context.read<ItemsAndPeopleCubit>()));
         },
         child: _buildParticipantStack(context),
       ),
@@ -111,7 +114,9 @@ class ParticipantStackWidget extends StatelessWidget {
 
 class ParticipantOfItemDialog extends StatelessWidget {
   final MenuItem item;
-  const ParticipantOfItemDialog({super.key, required this.item});
+  final ItemsAndPeopleCubit itemsAndPeopleCubit;
+  final Function(Participant participant) onParticipantDelete;
+  const ParticipantOfItemDialog({super.key, required this.item, required this.onParticipantDelete, required this.itemsAndPeopleCubit});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +125,20 @@ class ParticipantOfItemDialog extends StatelessWidget {
       content: SizedBox(
         width: double.maxFinite,
         height: 250,
-        child: Scrollbar(thumbVisibility: true, child: ParticipantListView(participants: item.participants, icon: Icon(Icons.delete_outline), action: (index) {}, physics: AlwaysScrollableScrollPhysics())),
+        child: BlocBuilder<ItemsAndPeopleCubit, ItemsAndPeopleState>(
+          bloc: itemsAndPeopleCubit,
+          builder: (context, state) {
+            return Scrollbar(
+              thumbVisibility: true,
+              child: ParticipantListView(
+                participants: item.participants,
+                icon: Icon(Icons.delete_outline),
+                action: (index) => onParticipantDelete(item.participants[index]),
+                physics: AlwaysScrollableScrollPhysics(),
+              ),
+            );
+          },
+        ),
       ),
       actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
     );
