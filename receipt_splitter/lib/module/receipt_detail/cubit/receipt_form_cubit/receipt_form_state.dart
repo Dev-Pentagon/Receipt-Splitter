@@ -5,6 +5,12 @@ sealed class ReceiptFormState {}
 
 final class ReceiptFormInitial extends ReceiptFormState {}
 
+final class ReceiptFormLoaded extends ReceiptFormState {
+  final Receipt receipt;
+
+  ReceiptFormLoaded({required this.receipt});
+}
+
 final class ReceiptFormSaved extends ReceiptFormState {
   final Receipt receipt;
 

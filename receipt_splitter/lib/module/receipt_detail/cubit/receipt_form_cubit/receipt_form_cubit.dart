@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipt_splitter/model/participant.dart';
 
+import '../../../../config/app_config.dart';
 import '../../../../model/menu_item.dart';
 import '../../../../model/receipt.dart';
+import '../../../util/id_generator_util.dart';
 
 part 'receipt_form_state.dart';
 
 class ReceiptFormCubit extends Cubit<ReceiptFormState> {
   ReceiptFormCubit() : super(ReceiptFormInitial());
 
-  void saveForm(Receipt receipt) {
+  void setForm(Receipt receipt) {
+    emit(ReceiptFormLoaded(receipt: receipt));
+  }
+
+  void saveForm(Receipt receipt) async {
     // TODO: Implement save form logic to Database
+    final String id = await IdGeneratorUtil.generateId(IdentifierType.receipt);
+    receipt.id = id;
     emit(ReceiptFormSaved(receipt: receipt));
   }
 
@@ -21,13 +29,27 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
   }
 
   void updateParticipant({required List<Participant> participants, required Participant participant}) {
-    List<Participant> newParticipants = _updateList<Participant>(participants, participant);
+    List<Participant> newParticipants = updateItemById<Participant>(participants, participant, (p) => p.id);
 
     emit(ParticipantUpdated(participants: newParticipants));
   }
 
   void updateItem({required List<MenuItem> items, required MenuItem item}) {
-    List<MenuItem> newItems = _updateList<MenuItem>(items, item);
+    List<MenuItem> newItems = updateItemById<MenuItem>(items, item, (i) => i.id);
+
+    emit(MenuItemUpdated(items: newItems));
+  }
+
+  void deleteParticipant({required List<Participant> participants, required Participant participant}) {
+    List<Participant> newParticipants = List.from(participants);
+    newParticipants.removeWhere((p) => p.id == participant.id);
+
+    emit(ParticipantUpdated(participants: newParticipants));
+  }
+
+  void deleteItem({required List<MenuItem> items, required MenuItem item}) {
+    List<MenuItem> newItems = List.from(items);
+    newItems.removeWhere((i) => i.id == item.id);
 
     emit(MenuItemUpdated(items: newItems));
   }
@@ -36,12 +58,18 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     emit(ReceiptFormInitial());
   }
 
-  List<T> _updateList<T>(List<T> list, T item) {
-    if (list.contains(item)) {
-      list[list.indexOf(item)] = item;
+  /// Updates an element in [list] by matching its id.
+  /// [updatedItem] is the new item that should replace the matching one.
+  /// [idGetter] is a function that extracts the id from an item.
+  List<T> updateItemById<T>(List<T> list, T updatedItem, dynamic Function(T) idGetter) {
+    final updatedId = idGetter(updatedItem);
+    final index = list.indexWhere((item) => idGetter(item) == updatedId);
+    if (index != -1) {
+      list[index] = updatedItem;
     } else {
-      list.add(item);
+      list.add(updatedItem);
     }
+
     return list;
   }
 }

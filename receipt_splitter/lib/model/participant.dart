@@ -1,14 +1,23 @@
+import '../config/app_config.dart';
+import '../module/util/id_generator_util.dart';
+
 class Participant {
-  final int id;
+  final String id;
   final String name;
 
-  Participant({
-    required this.id,
-    required this.name,
-  });
+  Participant._({required this.id, required this.name});
+
+  // Synchronous constructor if id is provided
+  Participant({required this.name, required this.id});
+
+  // Asynchronous factory for auto-generating id
+  static Future<Participant> create({required String name}) async {
+    final id = await IdGeneratorUtil.generateId(IdentifierType.participant);
+    return Participant._(id: id, name: name);
+  }
 
   Participant copyWith({
-    int? id,
+    String? id,
     String? name,
   }) {
     return Participant(

@@ -120,7 +120,7 @@ class ParticipantOfItemDialog extends StatelessWidget {
       content: SizedBox(
         width: double.maxFinite,
         height: 250,
-        child: Scrollbar(thumbVisibility: true, child: ParticipantListView(participants: item.participants, icon: Icon(Icons.delete_outline), action: () {}, physics: AlwaysScrollableScrollPhysics())),
+        child: Scrollbar(thumbVisibility: true, child: ParticipantListView(participants: item.participants, icon: Icon(Icons.delete_outline), action: (index) {}, physics: AlwaysScrollableScrollPhysics())),
       ),
       actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
     );

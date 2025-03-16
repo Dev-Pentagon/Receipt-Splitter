@@ -4,7 +4,7 @@ import 'menu_item.dart';
 import 'participant.dart';
 
 class Receipt {
-  int? id;
+  String? id;
   String? name;
   DateTime? date;
   double? serviceCharges;

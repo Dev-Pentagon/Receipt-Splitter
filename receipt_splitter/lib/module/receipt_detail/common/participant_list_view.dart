@@ -7,7 +7,7 @@ class ParticipantListView extends StatelessWidget {
   final List<Participant> participants;
   final ScrollPhysics? physics;
   final Widget icon;
-  final Function action;
+  final Function(int index) action;
   const ParticipantListView({super.key, required this.participants, required this.icon, required this.action, this.physics});
 
   @override
@@ -25,7 +25,7 @@ class ParticipantListView extends StatelessWidget {
               IconButton(
                 icon: icon,
                 onPressed: () {
-                  action();
+                  action(index);
                 },
               ),
             ],

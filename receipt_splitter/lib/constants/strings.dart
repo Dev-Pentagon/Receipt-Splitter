@@ -24,6 +24,7 @@ const String ACTION = 'Action';
 const String DELETE_RECEIPT_MESSAGE = "The receipt will be permanently deleted after 30 days.";
 const String PRICE = 'Price';
 const String SAVE = 'Save';
+const String PARTICIPANT_ALREADY_LINKED = 'Participant already linked to this item';
 
 
 String deleteReceiptMessage(String receiptName) {

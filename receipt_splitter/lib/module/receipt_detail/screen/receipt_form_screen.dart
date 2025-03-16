@@ -55,7 +55,7 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
       _dateController.text = DateTimeService.dayMonthYear(receipt.date ?? currentDate);
       _serviceChargeController.text = receipt.serviceCharges?.toString() ?? '0';
       _taxController.text = receipt.tax?.toString() ?? '0';
-      context.read<ReceiptTypeCubit>().setType(receipt.taxType ?? TaxType.inclusive);
+      context.read<ReceiptFormCubit>().setForm(receipt);
     }
   }
 
@@ -92,111 +92,125 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isNew ? CREATE_RECEIPT : EDIT_RECEIPT, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-        centerTitle: true,
-        actions: [
-          isNew
-              ? SizedBox.shrink()
-              : IconButton(
-                onPressed: () {
-                  DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {}, confirmText: DELETE, cancelText: CANCEL);
-                },
-                icon: Icon(Icons.delete),
-              ),
-        ],
-      ),
-      body: LayoutBuilderWidget(
-        child: Form(
-          child: BlocConsumer<ReceiptFormCubit, ReceiptFormState>(
-            listener: (context, state) {
-              if (state is ReceiptFormSaved) {
-                context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: state.receipt);
-              }
-            },
-            builder: (context, state) {
-              if (state is ReceiptFormUpdated) {
-                receipt = state.receipt;
-              } else if (state is ParticipantUpdated) {
-                receipt.participants = state.participants;
-              } else if (state is MenuItemUpdated) {
-                receipt.items = state.items;
-              }
-              return Column(
-                children: [
-                  Column(
-                    children: [
-                      CustomTextFieldWidget(label: NAME),
-                      CustomSpaceWidget(),
-                      CustomTextFieldWidget(
-                        controller: _dateController,
-                        label: DATE,
-                        onTap: () {
-                          showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2021), lastDate: DateTime(2030)).then((value) {
-                            if (value != null) {
-                              currentDate = value;
-                              _dateController.text = DateTimeService.dayMonthYear(value);
-                            }
-                          });
-                        },
-                        readOnly: true,
-                      ),
-                      CustomSpaceWidget(),
-                      CustomTextFieldWidget(label: SERVICE_CHARGE, keyboardType: TextInputType.number, textInputAction: TextInputAction.continueAction,),
-                      CustomSpaceWidget(),
-                      CustomTextFieldWidget(label: TAX, keyboardType: TextInputType.number),
-                      CustomSpaceWidget(),
-                      BlocBuilder<ReceiptTypeCubit, TaxType>(
-                        builder: (context, state) {
-                          return CustomRadioButton<TaxType>(
-                            options: TaxType.values,
-                            selectedValue: state,
-                            onChanged: (value) {
-                              context.read<ReceiptTypeCubit>().toggle();
-                            },
-                            labelBuilder: (type) => type == TaxType.inclusive ? "Inclusive" : "Exclusive",
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  isNew
-                      ? SizedBox.shrink()
-                      : Expanded(
-                        child: ParticipantsItemWidget(
-                          items: receipt.items,
-                          participants: receipt.participants,
-                          onUpdateItem: (items, item) => BlocProvider.of<ReceiptFormCubit>(context).updateItem(items: items, item: item),
-                          onUpdateParticipant: (participants, participant) => BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: participants, participant: participant),
+    return PopScope(
+      // I want to update the receipt if we click back or back button if the form is not new
+      // but if the form is new, nothing will happen
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop && !isNew) {
+          saveForm();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isNew ? CREATE_RECEIPT : EDIT_RECEIPT, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+          centerTitle: true,
+          actions: [
+            isNew
+                ? SizedBox.shrink()
+                : IconButton(
+                  onPressed: () {
+                    DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {}, confirmText: DELETE, cancelText: CANCEL);
+                  },
+                  icon: Icon(Icons.delete),
+                ),
+          ],
+        ),
+        body: LayoutBuilderWidget(
+          child: Form(
+            child: BlocConsumer<ReceiptFormCubit, ReceiptFormState>(
+              listener: (context, state) {
+                if (state is ReceiptFormSaved) {
+                  context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: state.receipt);
+                }
+              },
+              builder: (context, state) {
+                if (state is ReceiptFormLoaded) {
+                  receipt = state.receipt;
+                  context.read<ReceiptTypeCubit>().setType(receipt.taxType ?? TaxType.inclusive);
+                } else if (state is ReceiptFormUpdated) {
+                  receipt = state.receipt;
+                } else if (state is ParticipantUpdated) {
+                  receipt.participants = state.participants;
+                } else if (state is MenuItemUpdated) {
+                  receipt.items = state.items;
+                }
+                return Column(
+                  children: [
+                    Column(
+                      children: [
+                        CustomTextFieldWidget(label: NAME, controller: _nameController,),
+                        CustomSpaceWidget(),
+                        CustomTextFieldWidget(
+                          controller: _dateController,
+                          label: DATE,
+                          onTap: () {
+                            showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2021), lastDate: DateTime(2030)).then((value) {
+                              if (value != null) {
+                                currentDate = value;
+                                _dateController.text = DateTimeService.dayMonthYear(value);
+                              }
+                            });
+                          },
+                          readOnly: true,
                         ),
-                      ),
-                ],
-              );
-            },
+                        CustomSpaceWidget(),
+                        CustomTextFieldWidget(label: SERVICE_CHARGE, keyboardType: TextInputType.number, controller: _serviceChargeController),
+                        CustomSpaceWidget(),
+                        CustomTextFieldWidget(label: TAX, keyboardType: TextInputType.number, controller: _taxController),
+                        CustomSpaceWidget(),
+                        BlocBuilder<ReceiptTypeCubit, TaxType>(
+                          builder: (context, state) {
+                            return CustomRadioButton<TaxType>(
+                              options: TaxType.values,
+                              selectedValue: state,
+                              onChanged: (value) {
+                                context.read<ReceiptTypeCubit>().toggle();
+                              },
+                              labelBuilder: (type) => type == TaxType.inclusive ? "Inclusive" : "Exclusive",
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    isNew
+                        ? SizedBox.shrink()
+                        : Expanded(
+                          child: ParticipantsItemWidget(
+                            items: receipt.items,
+                            participants: receipt.participants,
+                            onUpdateItem: (items, item) => BlocProvider.of<ReceiptFormCubit>(context).updateItem(items: items, item: item),
+                            onUpdateParticipant: (participants, participant) => BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: participants, participant: participant),
+                            onDeleteItem: (items, item) => BlocProvider.of<ReceiptFormCubit>(context).deleteItem(items: items, item: item),
+                            onDeleteParticipant: (participants, participant) => BlocProvider.of<ReceiptFormCubit>(context).deleteParticipant(participants: participants, participant: participant),
+                          ),
+                        ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
+        bottomNavigationBar:
+            isNew
+                ? Container(
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  width: double.infinity,
+                  height: 80,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          resetFields();
+                        },
+                        icon: Icon(Icons.replay_outlined),
+                      ),
+                      Spacer(),
+                      FloatingActionButton(onPressed: () => saveForm(), child: Icon(Icons.arrow_forward)),
+                    ],
+                  ),
+                )
+                : null,
       ),
-      bottomNavigationBar:
-          isNew
-              ? Container(
-                color: Theme.of(context).colorScheme.surfaceContainer,
-                width: double.infinity,
-                height: 80,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        resetFields();
-                      },
-                      icon: Icon(Icons.replay_outlined),
-                    ),
-                    Spacer(),
-                    FloatingActionButton(onPressed: () => saveForm(), child: Icon(Icons.arrow_forward)),
-                  ],
-                ),
-              )
-              : null,
     );
   }
 }

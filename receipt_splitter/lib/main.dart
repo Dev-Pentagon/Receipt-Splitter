@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_splitter/config/routes.dart';
+import 'package:receipt_splitter/module/util/id_generator_util.dart';
 
 import 'config/theme.dart';
 
@@ -7,6 +8,8 @@ final GlobalKey<NavigatorState> navigatorKey =
 GlobalKey(debugLabel: 'Main Navigator');
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  IdGeneratorUtil.initialize();
   runApp(const MyApp());
 }
 

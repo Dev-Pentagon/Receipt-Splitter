@@ -12,22 +12,28 @@ class ParticipantsItemWidget extends StatefulWidget {
   final List<MenuItem> items;
   final Function(List<Participant>, Participant participant) onUpdateParticipant;
   final Function(List<MenuItem>, MenuItem item) onUpdateItem;
-  const ParticipantsItemWidget({super.key, required this.participants, required this.items, required this.onUpdateParticipant, required this.onUpdateItem});
+  final Function(List<Participant>, Participant participant) onDeleteParticipant;
+  final Function(List<MenuItem>, MenuItem item) onDeleteItem;
+  const ParticipantsItemWidget({
+    super.key,
+    required this.participants,
+    required this.items,
+    required this.onUpdateParticipant,
+    required this.onUpdateItem,
+    required this.onDeleteParticipant,
+    required this.onDeleteItem,
+  });
 
   @override
   State<ParticipantsItemWidget> createState() => _ParticipantsItemWidgetState();
 }
 
 class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with SingleTickerProviderStateMixin {
-  List<Participant> participants = [];
-  List<MenuItem> items = [];
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    participants = widget.participants;
-    items = widget.items;
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -63,7 +69,7 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const SizedBox(height: 10),
-              (participant != null || isParticipant)
+              (isParticipant)
                   ? CustomTextFieldWidget(label: NAME, controller: participantNameController)
                   : Column(
                     children: [
@@ -79,15 +85,29 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   InkWell(
-                    onTap: () {
-                      if (participant != null || isParticipant) {
+                    onTap: () async {
+                      if (isParticipant) {
                         // Update participant data
-                        participant = participant?.copyWith(name: participantNameController.text);
-                        Navigator.pop(context, participant); // Return updated participant
-                      } else if (item != null) {
+                        if (participant == null) {
+                          participant = await Participant.create(name: participantNameController.text);
+                        } else {
+                          participant = participant?.copyWith(name: participantNameController.text);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context, participant); // Return updated participant
+                        }
+                      } else {
                         // Update item data
-                        item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
-                        Navigator.pop(context, item); // Return updated item
+                        if (item == null) {
+                          // item = MenuItem(id: 'ITM', name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
+                          item = await MenuItem.create(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
+                        } else {
+                          // Update existing item
+                          item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context, item); // Return updated item
+                        }
                       }
                     },
                     child: Container(
@@ -106,22 +126,32 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
                     ),
                   ),
                   const SizedBox(width: 16),
-                  InkWell(
-                    onTap: () {
-                      return context.pop(null);
-                    },
-                    child: Container(
-                      width: 107,
-                      height: 40,
-                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
-                          const SizedBox(width: 10),
-                          Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-                        ],
+                  Visibility(
+                    visible: data != null,
+                    child: InkWell(
+                      onTap: () {
+                        if (isParticipant) {
+                          // Delete participant
+                          widget.onDeleteParticipant(List.of(widget.participants), participant!);
+                        } else {
+                          // Delete item
+                          widget.onDeleteItem(List.of(widget.items), item!);
+                        }
+                        return context.pop(null);
+                      },
+                      child: Container(
+                        width: 107,
+                        height: 40,
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
+                            const SizedBox(width: 10),
+                            Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -149,9 +179,9 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
 
   void _updateItem({Participant? participant, MenuItem? item}) {
     if (participant != null) {
-      widget.onUpdateParticipant(participants, participant);
+      widget.onUpdateParticipant(List.of(widget.participants), participant);
     } else if (item != null) {
-      widget.onUpdateItem(items, item);
+      widget.onUpdateItem(List.of(widget.items), item);
     }
   }
 
@@ -162,7 +192,7 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
         mainAxisSize: MainAxisSize.min,
         children: [
           TabBar(controller: _tabController, tabs: const [Tab(text: "Participants"), Tab(text: "Items")]),
-          Expanded(child: TabBarView(controller: _tabController, children: [_buildParticipantsListView(participants, "Participants"), _buildListView(items, "Items")])),
+          Expanded(child: TabBarView(controller: _tabController, children: [_buildParticipantsListView(List.of(widget.participants), "Participants"), _buildListView(List.of(widget.items), "Items")])),
         ],
       ),
       floatingActionButton: AnimatedBuilder(
@@ -196,19 +226,21 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
     return Column(
       children: [
         SizedBox(height: 10),
-        TableWidget(
-          items: list,
-          actionName: ACTION,
-          actionWidget:
-              (index) => IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () async {
-                  MenuItem? item = await _showEditBottomSheet<MenuItem>(data: list[index], index: index);
-                  if (item != null) {
-                    _updateItem(item: item);
-                  }
-                },
-              ),
+        Expanded(
+          child: TableWidget(
+            items: list,
+            actionName: ACTION,
+            actionWidget:
+                (index) => IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () async {
+                    MenuItem? item = await _showEditBottomSheet<MenuItem>(data: list[index], index: index);
+                    if (item != null) {
+                      _updateItem(item: item);
+                    }
+                  },
+                ),
+          ),
         ),
       ],
     );
@@ -219,7 +251,7 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
       participants: participants,
       icon: const Icon(Icons.edit),
       action: (index) async {
-        Participant? participant = await _showEditBottomSheet<Participant>(data: participants[index], index: index);
+        Participant? participant = await _showEditBottomSheet<Participant>(data: participants[index], index: index, isParticipant: true);
         if (participant != null) {
           _updateItem(participant: participant);
         }
