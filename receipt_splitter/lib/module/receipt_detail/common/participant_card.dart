@@ -10,10 +10,11 @@ class DraggableCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LongPressDraggable<Participant>(
       data: participant,
+      delay: Duration(milliseconds: 200),
       feedback: Stack(
         clipBehavior: Clip.none,
         children: [
-          ParticipantCard(participant: participant),
+          _ParticipantCard(participant: participant),
           Positioned(
             right: -5,
             top: -5,
@@ -24,16 +25,16 @@ class DraggableCard extends StatelessWidget {
           ),
         ],
       ),
-      childWhenDragging: ParticipantCard(participant: participant, opacity: 0.75),
-      child: ParticipantCard(participant: participant),
+      childWhenDragging: _ParticipantCard(participant: participant, opacity: 0.75),
+      child: _ParticipantCard(participant: participant),
     );
   }
 }
 
-class ParticipantCard extends StatelessWidget {
+class _ParticipantCard extends StatelessWidget {
   final Participant participant;
   final double opacity;
-  const ParticipantCard({super.key, required this.participant, this.opacity = 1});
+  const _ParticipantCard({required this.participant, this.opacity = 1});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 const String RECEIPT_SPLITTER = 'Receipt Splitter';
 const String NO_RECEIPT_FOUND = 'No Receipt Found';
 const String START_SCANNING_RECEIPT = 'Start by scanning a receipt to split expenses effortlessly!';
-const String DELETE_RECEIPT = 'Delete this Receipt?';
+const String DELETE_RECEIPT = 'Delete this receipt?';
 const String CANCEL = 'Cancel';
 const String DELETE = 'Delete';
 const String CREATE_RECEIPT = 'Create Receipt';

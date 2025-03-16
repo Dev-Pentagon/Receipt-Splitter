@@ -6,6 +6,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     required this.label,
     this.controller,
     this.keyboardType = TextInputType.text,
+    this.textInputAction = TextInputAction.done,
     this.obscureText = false,
     this.enabled = true,
     this.readOnly = false,
@@ -16,6 +17,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final String label;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  final TextInputAction textInputAction;
   final bool obscureText;
   final bool enabled;
   final bool readOnly;
@@ -28,6 +30,7 @@ class CustomTextFieldWidget extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(border: OutlineInputBorder(), labelText: label),
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
       obscureText: obscureText,
       enabled: enabled,
       readOnly: readOnly,

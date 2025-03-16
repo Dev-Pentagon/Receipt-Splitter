@@ -13,15 +13,15 @@ class DialogService {
     return _showDialog(context: context, title: title, message: message, icon: Icons.error, iconColor: Colors.red, confirmText: "Retry", onConfirm: onConfirm ?? () => Navigator.pop(context));
   }
 
-  static Future<void> showConfirmationDialog({required BuildContext context, required String title, required String message, required VoidCallback onConfirm, VoidCallback? onCancel}) {
+  static Future<void> showConfirmationDialog({required BuildContext context, required String title, required String message, required VoidCallback onConfirm, VoidCallback? onCancel, String confirmText = "Yes", String cancelText = "No"}) {
     return _showDialog(
       context: context,
       title: title,
       message: message,
       icon: Icons.help,
       iconColor: Colors.blue,
-      confirmText: "Yes",
-      cancelText: "No",
+      confirmText: confirmText,
+      cancelText: cancelText,
       onConfirm: onConfirm,
       onCancel: onCancel ?? () => Navigator.pop(context),
     );

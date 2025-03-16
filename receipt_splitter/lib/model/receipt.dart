@@ -1,8 +1,17 @@
-class Receipt {
-  final int id;
-  final String name;
-  final DateTime date;
-  // TODO: add List<Participant> participants; List<MenuItem> items;
+import 'package:receipt_splitter/model/tax_type.dart';
 
-  Receipt({required this.id, required this.name, required this.date});
+import 'menu_item.dart';
+import 'participant.dart';
+
+class Receipt {
+  int? id;
+  String? name;
+  DateTime? date;
+  double? serviceCharges;
+  double? tax;
+  TaxType? taxType;
+  List<Participant> participants;
+  List<MenuItem> items;
+
+  Receipt({this.id, this.name, this.date, this.serviceCharges, this.tax, this.taxType, this.participants = const [], this.items = const []});
 }

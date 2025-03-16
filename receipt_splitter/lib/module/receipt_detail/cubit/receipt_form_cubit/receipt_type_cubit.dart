@@ -7,4 +7,8 @@ class ReceiptTypeCubit extends Cubit<TaxType> {
   void toggle() {
     emit(state == TaxType.inclusive ? TaxType.exclusive : TaxType.inclusive);
   }
+
+  void setType(TaxType type) {
+    emit(type);
+  }
 }

@@ -1,7 +1,9 @@
+import '../config/app_config.dart';
+
 class DateTimeService {
 
 
-  static dayMonthYear(DateTime date) {
-    return "${date.day}/${date.month}/${date.year}";
+  static String dayMonthYear(DateTime date) {
+    return dateFormatter.format(date);
   }
 }
