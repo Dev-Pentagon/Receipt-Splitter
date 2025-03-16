@@ -7,6 +7,7 @@ import 'package:receipt_splitter/module/receipt_detail/cubit/receipt_form_cubit/
 import 'package:receipt_splitter/module/receipt_detail/screen/receipt_form_screen.dart';
 import 'package:receipt_splitter/module/receipt_detail/cubit/items_and_people_cubit/items_and_people_cubit.dart';
 import 'package:receipt_splitter/module/receipt_detail/screen/items_and_people_screen.dart';
+import 'package:receipt_splitter/module/receipt_detail/screen/receipt_scanner_screen.dart';
 import 'package:receipt_splitter/module/receipt_list/cubit/fab_cubit.dart';
 import 'package:receipt_splitter/module/receipt_list/screen/receipt_list_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,6 +36,7 @@ class Routes {
               child: ReceiptFormScreen(arguments: state.extra as ReceiptFormScreenArguments),
             ),
       ),
+      GoRoute(name: ReceiptScannerScreen.scan, path: '/scan', builder: (context, state) => ReceiptScannerScreen()),
     ],
   );
 }
