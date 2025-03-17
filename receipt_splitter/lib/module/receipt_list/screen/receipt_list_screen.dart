@@ -8,6 +8,7 @@ import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/model/tax_type.dart';
 import 'package:receipt_splitter/module/receipt_list/common/receipt_item.dart';
 import 'package:receipt_splitter/module/receipt_list/cubit/fab_cubit.dart';
+import 'package:receipt_splitter/module/settings/screens/setting_screen.dart';
 import 'package:receipt_splitter/services/dialog_service.dart';
 
 import '../../../model/menu_item.dart';
@@ -69,7 +70,9 @@ class ReceiptListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(RECEIPT_SPLITTER, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-        actions: [IconButton(icon: Icon(Icons.settings), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.settings), onPressed: () {
+          context.pushNamed(SettingScreen.tag);
+        })],
         centerTitle: true,
       ),
       body: LayoutBuilderWidget(
