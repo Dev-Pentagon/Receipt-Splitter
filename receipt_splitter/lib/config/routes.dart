@@ -11,6 +11,8 @@ import 'package:receipt_splitter/module/receipt_detail/screen/receipt_scanner_sc
 import 'package:receipt_splitter/module/receipt_list/cubit/fab_cubit.dart';
 import 'package:receipt_splitter/module/receipt_list/screen/receipt_list_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:receipt_splitter/module/settings/screens/currency_list_screen.dart';
+import 'package:receipt_splitter/module/settings/screens/setting_screen.dart';
 
 class Routes {
   static const String splash = '/';
@@ -37,6 +39,8 @@ class Routes {
             ),
       ),
       GoRoute(name: ReceiptScannerScreen.scan, path: '/scan', builder: (context, state) => ReceiptScannerScreen()),
+      GoRoute(name: SettingScreen.tag, path: SettingScreen.tag, builder: (context, state) => SettingScreen()),
+      GoRoute(name: CurrencyListView.tag, path: CurrencyListView.tag, builder: (context, state) => CurrencyListView()),
     ],
   );
 }
