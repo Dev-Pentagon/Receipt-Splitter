@@ -19,16 +19,14 @@ class _CurrencyListViewState extends State<CurrencyListView> {
   late List<Currency> _filteredList;
   late List<Currency> _currencyList;
   List<Currency>? _favoriteList;
-  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(
-    CurrencyService().findByCode('MMK'),
-  );
+  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(CurrencyService().findByCode('MMK'));
   TextEditingController? _searchController;
 
   @override
   void initState() {
     _searchController = TextEditingController();
-    String currencyCode = Preferences().getCurrencyCode();
-    selectedCurrency.value = _currencyService.findByCode(currencyCode);
+    Currency currencyCode = Preferences().getCurrencyCode();
+    selectedCurrency.value = _currencyService.findByCode(currencyCode.code);
     _currencyList = _currencyService.getAll();
 
     _filteredList = <Currency>[];
@@ -46,54 +44,30 @@ class _CurrencyListViewState extends State<CurrencyListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Currency', style: Theme.of(context).textTheme.titleLarge),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text('Currency', style: Theme.of(context).textTheme.titleLarge)),
       body: LayoutBuilderWidget(
         child: Column(
           children: <Widget>[
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 14,
-                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                 hintText: 'Search currency',
-                suffixIcon: Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                suffixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 16,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
               ),
               onChanged: _filterSearchResults,
             ),
-            SizedBox(
-              height: 15,
-            ),
+            SizedBox(height: 15),
             Expanded(
               child: ListView(
                 // physics: widget.physics,
                 children: [
-                  if (_favoriteList != null) ...[
-                    ..._favoriteList!.map<Widget>(
-                      (currency) => _listRow(currency),
-                    ),
-                    Divider(thickness: 1),
-                  ],
-                  ..._filteredList.map<Widget>(
-                    (currency) => _listRow(currency),
-                  ),
+                  if (_favoriteList != null) ...[..._favoriteList!.map<Widget>((currency) => _listRow(currency)), Divider(thickness: 1)],
+                  ..._filteredList.map<Widget>((currency) => _listRow(currency)),
                 ],
               ),
             ),
@@ -110,7 +84,7 @@ class _CurrencyListViewState extends State<CurrencyListView> {
         return InkWell(
           onTap: () {
             selectedCurrency.value = currency;
-            Preferences().setCurrencyCode(currency.code);
+            Preferences().setCurrencyCode(currency);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -123,10 +97,7 @@ class _CurrencyListViewState extends State<CurrencyListView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        currency.code,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
+                      Text(currency.code, style: Theme.of(context).textTheme.bodyLarge),
                       Text(
                         currency.name,
                         style: Theme.of(context).textTheme.bodySmall,
@@ -137,16 +108,13 @@ class _CurrencyListViewState extends State<CurrencyListView> {
                 ),
                 Row(
                   children: [
-                    Text(
-                      currency.symbol,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    Text(currency.symbol, style: Theme.of(context).textTheme.bodySmall),
                     Radio(
                       value: currency,
                       groupValue: select,
                       onChanged: (Currency? value) {
                         selectedCurrency.value = value;
-                        Preferences().setCurrencyCode(value!.code);
+                        Preferences().setCurrencyCode(value!);
                       },
                     ),
                   ],
@@ -164,10 +132,7 @@ class _CurrencyListViewState extends State<CurrencyListView> {
       return Text('NF', style: TextStyle(fontSize: 25));
     }
 
-    return Text(
-      CurrencyUtils.currencyToEmoji(currency),
-      style: TextStyle(fontSize: 25),
-    );
+    return Text(CurrencyUtils.currencyToEmoji(currency), style: TextStyle(fontSize: 25));
   }
 
   void _filterSearchResults(String query) {
@@ -176,14 +141,7 @@ class _CurrencyListViewState extends State<CurrencyListView> {
     if (query.isEmpty) {
       searchResult.addAll(_currencyList);
     } else {
-      searchResult =
-          _currencyList
-              .where(
-                (c) =>
-                    c.name.toLowerCase().contains(query.toLowerCase().trim()) ||
-                    c.code.toLowerCase().contains(query.toLowerCase().trim()),
-              )
-              .toList();
+      searchResult = _currencyList.where((c) => c.name.toLowerCase().contains(query.toLowerCase().trim()) || c.code.toLowerCase().contains(query.toLowerCase().trim())).toList();
     }
 
     setState(() => _filteredList = searchResult);

@@ -14,6 +14,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipt_splitter/module/settings/screens/currency_list_screen.dart';
 import 'package:receipt_splitter/module/settings/screens/setting_screen.dart';
 
+import '../module/receipt_detail/screen/preview_screen.dart';
+
 class Routes {
   static const String splash = '/';
 
@@ -23,24 +25,25 @@ class Routes {
     navigatorKey: navigatorKey,
     routes: <RouteBase>[
       GoRoute(name: splash, path: '/', builder: (context, state) => SplashScreen()),
-      GoRoute(name: ReceiptListScreen.receiptSplit, path: '/receiptSplit', builder: (context, state) => BlocProvider(create: (context) => FabCubit(), child: ReceiptListScreen())),
+      GoRoute(name: ReceiptListScreen.receiptSplit, path: ReceiptListScreen.receiptSplit, builder: (context, state) => BlocProvider(create: (context) => FabCubit(), child: ReceiptListScreen())),
       GoRoute(
         name: ItemsAndPeopleScreen.itemsAndPeople,
-        path: '/itemsAndPeople',
+        path: ItemsAndPeopleScreen.itemsAndPeople,
         builder: (context, state) => BlocProvider(create: (context) => ItemsAndPeopleCubit(), child: ItemsAndPeopleScreen(receipt: state.extra as Receipt)),
       ),
       GoRoute(
         name: ReceiptFormScreen.receiptForm,
-        path: '/receiptForm',
+        path: ReceiptFormScreen.receiptForm,
         builder:
             (context, state) => MultiBlocProvider(
               providers: [BlocProvider(create: (context) => ReceiptTypeCubit()), BlocProvider(create: (context) => ReceiptFormCubit())],
               child: ReceiptFormScreen(arguments: state.extra as ReceiptFormScreenArguments),
             ),
       ),
-      GoRoute(name: ReceiptScannerScreen.scan, path: '/scan', builder: (context, state) => ReceiptScannerScreen()),
+      GoRoute(name: ReceiptScannerScreen.scan, path: ReceiptScannerScreen.scan, builder: (context, state) => ReceiptScannerScreen()),
       GoRoute(name: SettingScreen.tag, path: SettingScreen.tag, builder: (context, state) => SettingScreen()),
       GoRoute(name: CurrencyListView.tag, path: CurrencyListView.tag, builder: (context, state) => CurrencyListView()),
+      GoRoute(name: PreviewScreen.preview, path: PreviewScreen.preview, builder: (context, state) => PreviewScreen(receipt: state.extra as Receipt)),
     ],
   );
 }

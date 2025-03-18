@@ -60,7 +60,7 @@ class SettingScreen extends StatelessWidget {
                   child: Switch(
                     trackOutlineWidth: WidgetStateProperty.all(2),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: Preferences().getDarkMode() == ThemeMode.dark,
+                    value: Preferences().getThemeMode() == ThemeMode.dark,
                     onChanged:
                         (value) => context.read<ThemeCubit>().toggleTheme(),
                   ),

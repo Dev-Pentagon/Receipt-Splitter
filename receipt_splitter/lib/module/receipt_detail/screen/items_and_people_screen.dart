@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/module/receipt_detail/cubit/items_and_people_cubit/items_and_people_cubit.dart';
+import 'package:receipt_splitter/module/receipt_detail/screen/preview_screen.dart';
 import 'package:receipt_splitter/module/receipt_detail/screen/receipt_form_screen.dart';
 
 import '../../../common/layout_builder_widget.dart';
@@ -34,6 +35,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
       ),
       body: LayoutBuilderWidget(
         child: Column(
+          spacing: 15,
           crossAxisAlignment: receipt.participants.isNotEmpty ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: [
             Expanded(
@@ -72,7 +74,6 @@ class ItemsAndPeopleScreen extends StatelessWidget {
             ),
             const Divider(),
             SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 15.0),
               scrollDirection: Axis.horizontal,
               child: IntrinsicHeight(
                 child: Row(
@@ -88,6 +89,12 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.tonalIcon(onPressed: () {
+                context.pushNamed(PreviewScreen.preview, extra: receipt);
+              }, label: Text(NEXT, style: Theme.of(context).textTheme.labelLarge), icon: const Icon(Icons.arrow_forward)),
             ),
           ],
         ),

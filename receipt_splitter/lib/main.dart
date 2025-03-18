@@ -16,7 +16,7 @@ Future<void> main() async {
   IdGeneratorUtil.initialize();
   Preferences pref = Preferences();
   await pref.initPreferences();
-  ThemeMode themeMode = pref.getDarkMode();
+  ThemeMode themeMode = pref.getThemeMode();
   runApp(
     BlocProvider(
       create: (context) => ThemeCubit(themeMode),
@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
     TextTheme textTheme = MaterialTheme.createTextTheme(
       context,
       fontFamily: "Roboto",
@@ -42,8 +41,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Receipt Splitter',
-          theme: brightness == Brightness.light ? theme.light() : theme.dark(),
           themeMode: themeMode,
+          theme: theme.light(),
           darkTheme: theme.dark(),
           routerConfig: Routes.router,
         );

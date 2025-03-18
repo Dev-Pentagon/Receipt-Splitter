@@ -10,8 +10,9 @@ class TableWidget extends StatelessWidget {
   final String actionName;
   final Widget Function(int index) actionWidget;
   final bool enableDragTarget;
+  final bool showTotal;
   final void Function(DragTargetDetails<Participant> details, MenuItem item)? onItemDropped; // Type-safe drop handler
-  const TableWidget({super.key, required this.items, required this.actionName, required this.actionWidget, this.enableDragTarget = false, this.onItemDropped})
+  const TableWidget({super.key, required this.items, required this.actionName, required this.actionWidget, this.enableDragTarget = false, this.showTotal = false, this.onItemDropped})
     : assert(enableDragTarget == (onItemDropped != null), 'onItemDropped must be provided if enableDragTarget is true');
 
   @override
