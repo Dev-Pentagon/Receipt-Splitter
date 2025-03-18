@@ -17,9 +17,9 @@ class ParticipantListView extends StatelessWidget {
       physics: physics,
       itemBuilder:
           (context, index) => Row(
+            spacing: 16,
             children: [
               ParticipantAvatar(participant: participants[index], width: 40, height: 40),
-              SizedBox(width: 16),
               Text(participants[index].name, style: Theme.of(context).textTheme.bodyLarge),
               Spacer(),
               IconButton(
