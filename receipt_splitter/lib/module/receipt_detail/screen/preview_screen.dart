@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_splitter/common/layout_builder_widget.dart';
+import 'package:receipt_splitter/extension/route_extension.dart';
 import 'package:receipt_splitter/model/participant_bill.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participant_avatar.dart';
 
 import '../../../constants/strings.dart';
 import '../../../util/format_currency_util.dart';
+import '../../receipt_list/screen/receipt_list_screen.dart';
 
 class PreviewScreen extends StatelessWidget {
   static const String preview = '/preview';
@@ -100,7 +102,14 @@ class PreviewScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 OutlinedButton.icon(onPressed: () {}, label: Text(EXPORT), icon: const Icon(Icons.file_open_outlined)),
-                FilledButton.icon(onPressed: () {}, label: Text(DONE), icon: const Icon(Icons.check)),
+                FilledButton.icon(
+                  onPressed: () {
+                    // replace whole navigation stack with list screen
+                    context.pushNamedAndRemoveUntil(ReceiptListScreen.receiptSplit);
+                  },
+                  label: Text(DONE),
+                  icon: const Icon(Icons.check),
+                ),
               ],
             ),
           ],

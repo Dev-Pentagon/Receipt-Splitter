@@ -12,6 +12,8 @@ import 'package:receipt_splitter/module/receipt_detail/cubit/receipt_form_cubit/
 import 'package:receipt_splitter/services/date_time_service.dart';
 import 'package:receipt_splitter/services/dialog_service.dart';
 
+import '../../../model/menu_item.dart';
+import '../../../model/participant.dart';
 import '../../../model/receipt.dart';
 import 'items_and_people_screen.dart';
 
@@ -31,7 +33,9 @@ class ReceiptFormScreen extends StatefulWidget {
   State<ReceiptFormScreen> createState() => _ReceiptFormScreenState();
 }
 
-class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
+class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _serviceChargeController = TextEditingController();
@@ -45,6 +49,7 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     isNew = widget.arguments.isNew ?? true;
     if (isNew) {
       _dateController.text = DateTimeService.dayMonthYear(currentDate);
@@ -90,6 +95,28 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
     }
   }
 
+  void _addNewItem() async {
+    String tab = _tabController.index == 0 ? "Participants" : "Items";
+    Participant? participant;
+    MenuItem? menuItem;
+
+    if (tab == "Participants") {
+      participant = await _showEditBottomSheet<Participant>(data: null, index: 0, isParticipant: true);
+    } else {
+      menuItem = await _showEditBottomSheet<MenuItem>(data: null, index: 0);
+    }
+
+    _updateItem(participant: participant, item: menuItem);
+  }
+
+  void _updateItem({Participant? participant, MenuItem? item}) {
+    if (participant != null) {
+      BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: receipt.participants, participant: participant);
+    } else if (item != null) {
+      BlocProvider.of<ReceiptFormCubit>(context).updateItem(items: receipt.items, item: item);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -101,26 +128,14 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(isNew ? CREATE_RECEIPT : EDIT_RECEIPT, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-          centerTitle: true,
-          actions: [
-            isNew
-                ? SizedBox.shrink()
-                : IconButton(
-                  onPressed: () {
-                    DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {}, confirmText: DELETE, cancelText: CANCEL);
-                  },
-                  icon: Icon(Icons.delete),
-                ),
-          ],
-        ),
+        appBar: AppBar(title: Text(isNew ? CREATE_RECEIPT : EDIT_RECEIPT, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)), centerTitle: true),
         body: LayoutBuilderWidget(
+          bottom: 0,
           child: Form(
             child: BlocConsumer<ReceiptFormCubit, ReceiptFormState>(
               listener: (context, state) {
                 if (state is ReceiptFormSaved) {
-                  context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: state.receipt);
+                  context.pushReplacementNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: state.receipt);
                 }
               },
               builder: (context, state) {
@@ -138,7 +153,7 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
                   children: [
                     Column(
                       children: [
-                        CustomTextFieldWidget(label: NAME, controller: _nameController,),
+                        CustomTextFieldWidget(label: NAME, controller: _nameController),
                         CustomSpaceWidget(),
                         CustomTextFieldWidget(
                           controller: _dateController,
@@ -178,10 +193,21 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
                           child: ParticipantsItemWidget(
                             items: receipt.items,
                             participants: receipt.participants,
-                            onUpdateItem: (items, item) => BlocProvider.of<ReceiptFormCubit>(context).updateItem(items: items, item: item),
-                            onUpdateParticipant: (participants, participant) => BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: participants, participant: participant),
-                            onDeleteItem: (items, item) => BlocProvider.of<ReceiptFormCubit>(context).deleteItem(items: items, item: item),
-                            onDeleteParticipant: (participants, participant) => BlocProvider.of<ReceiptFormCubit>(context).deleteParticipant(participants: participants, participant: participant),
+                            onUpdateItem: (item) {
+                              _showEditBottomSheet<MenuItem>(data: item, index: 0).then((value) {
+                                if (value != null) {
+                                  _updateItem(item: value);
+                                }
+                              });
+                            },
+                            onUpdateParticipant: (participant) {
+                              _showEditBottomSheet<Participant>(data: participant, index: 0, isParticipant: true).then((value) {
+                                if (value != null) {
+                                  _updateItem(participant: value);
+                                }
+                              });
+                            },
+                            tabController: _tabController,
                           ),
                         ),
                   ],
@@ -190,27 +216,154 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
             ),
           ),
         ),
-        bottomNavigationBar:
-            isNew
-                ? Container(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  width: double.infinity,
-                  height: 80,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          resetFields();
-                        },
-                        icon: Icon(Icons.replay_outlined),
-                      ),
-                      Spacer(),
-                      FloatingActionButton(onPressed: () => saveForm(), child: Icon(Icons.arrow_forward)),
-                    ],
-                  ),
-                )
-                : null,
+        bottomNavigationBar: BottomAppBar(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          child: Row(
+            children: isNew
+                ? [
+              IconButton(
+                onPressed: () {
+                  resetFields();
+                },
+                icon: Icon(Icons.replay_outlined),
+              ),
+              Spacer(),
+              FloatingActionButton(onPressed: () => saveForm(), child: Icon(Icons.arrow_forward)),
+            ]
+                : [
+              IconButton(
+                onPressed: () {
+                  DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {}, confirmText: DELETE, cancelText: CANCEL);
+                },
+                icon: Icon(Icons.delete_outline),
+              ),
+              Spacer(),
+              FloatingActionButton(onPressed: () => _addNewItem(), child: Icon(Icons.add)),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Future<T?> _showEditBottomSheet<T>({required T? data, required int index, bool isParticipant = false}) {
+    Participant? participant;
+    MenuItem? item;
+
+    if (data is Participant) {
+      participant = data;
+    } else if (data is MenuItem) {
+      item = data;
+    }
+
+    TextEditingController participantNameController = TextEditingController(text: participant?.name);
+    TextEditingController nameController = TextEditingController(text: item?.name);
+    TextEditingController qtyController = TextEditingController(text: item?.quantity.toString());
+    TextEditingController priceController = TextEditingController(text: item?.price.toString());
+
+    return showModalBottomSheet<T?>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16, top: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const SizedBox(height: 10),
+              (isParticipant)
+                  ? CustomTextFieldWidget(label: NAME, controller: participantNameController)
+                  : Column(
+                children: [
+                  CustomTextFieldWidget(label: NAME, controller: nameController),
+                  const SizedBox(height: 16),
+                  CustomTextFieldWidget(label: QTY, controller: qtyController),
+                  const SizedBox(height: 16),
+                  CustomTextFieldWidget(label: PRICE, controller: priceController),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      if (isParticipant) {
+                        // Update participant data
+                        if (participant == null) {
+                          participant = await Participant.create(name: participantNameController.text);
+                        } else {
+                          participant = participant?.copyWith(name: participantNameController.text);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context, participant); // Return updated participant
+                        }
+                      } else {
+                        // Update item data
+                        if (item == null) {
+                          // item = MenuItem(id: 'ITM', name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
+                          item = await MenuItem.create(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
+                        } else {
+                          // Update existing item
+                          item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context, item); // Return updated item
+                        }
+                      }
+                    },
+                    child: Container(
+                      width: 107,
+                      height: 40,
+                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.save_alt, color: Theme.of(context).colorScheme.onTertiary),
+                          const SizedBox(width: 10),
+                          Text(SAVE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Visibility(
+                    visible: data != null,
+                    child: InkWell(
+                      onTap: () {
+                        if (isParticipant) {
+                          // Delete participant
+                          BlocProvider.of<ReceiptFormCubit>(context).deleteParticipant(participants: receipt.participants, participant: participant!);
+                        } else {
+                          // Delete item
+                          BlocProvider.of<ReceiptFormCubit>(context).deleteItem(items: receipt.items, item: item!);
+                        }
+                        return context.pop(null);
+                      },
+                      child: Container(
+                        width: 107,
+                        height: 40,
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
+                            const SizedBox(width: 10),
+                            Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

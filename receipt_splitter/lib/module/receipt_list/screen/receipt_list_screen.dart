@@ -6,6 +6,7 @@ import 'package:receipt_splitter/common/layout_builder_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/model/tax_type.dart';
+import 'package:receipt_splitter/module/receipt_detail/screen/receipt_scanner_screen.dart';
 import 'package:receipt_splitter/module/receipt_list/common/receipt_item.dart';
 import 'package:receipt_splitter/module/receipt_list/cubit/fab_cubit.dart';
 import 'package:receipt_splitter/module/settings/screens/setting_screen.dart';
@@ -116,19 +117,19 @@ class ReceiptListScreen extends StatelessWidget {
                     FloatingActionButton(
                       heroTag: "create_receipt_fab",
                       onPressed: () {
+                        context.read<FabCubit>().toggle();
                         context.pushNamed(ReceiptFormScreen.receiptForm, extra: ReceiptFormScreenArguments(isNew: true));
                       },
                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                       child: Icon(Icons.add),
                     ),
-
                     SizedBox(height: 10),
-
                     // Second FAB Button (slightly above the first one)
                     FloatingActionButton(
                       heroTag: "scan_receipt_fab",
                       onPressed: () {
-                        // Action for Button 2
+                        context.read<FabCubit>().toggle();
+                        context.pushNamed(ReceiptScannerScreen.scan);
                       },
                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                       child: Icon(Icons.document_scanner_outlined),
@@ -142,7 +143,7 @@ class ReceiptListScreen extends StatelessWidget {
               FloatingActionButton(
                 heroTag: "main_fab",
                 onPressed: () {
-                  context.read<FabCubit>().toggle(); // Toggle the state of the FABs
+                  context.read<FabCubit>().toggle();
                 },
                 backgroundColor: state ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primaryContainer,
                 child: Icon(state ? Icons.close : Icons.arrow_upward_outlined),

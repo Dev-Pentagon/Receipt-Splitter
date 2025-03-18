@@ -1,189 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:receipt_splitter/common/custom_text_field_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
 import 'package:receipt_splitter/model/menu_item.dart';
 import 'package:receipt_splitter/model/participant.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participant_list_view.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/table_widget.dart';
 
-class ParticipantsItemWidget extends StatefulWidget {
+class ParticipantsItemWidget extends StatelessWidget {
   final List<Participant> participants;
   final List<MenuItem> items;
-  final Function(List<Participant>, Participant participant) onUpdateParticipant;
-  final Function(List<MenuItem>, MenuItem item) onUpdateItem;
-  final Function(List<Participant>, Participant participant) onDeleteParticipant;
-  final Function(List<MenuItem>, MenuItem item) onDeleteItem;
-  const ParticipantsItemWidget({
-    super.key,
-    required this.participants,
-    required this.items,
-    required this.onUpdateParticipant,
-    required this.onUpdateItem,
-    required this.onDeleteParticipant,
-    required this.onDeleteItem,
-  });
+  final TabController tabController;
+  final Function(Participant participant) onUpdateParticipant;
+  final Function(MenuItem item) onUpdateItem;
 
-  @override
-  State<ParticipantsItemWidget> createState() => _ParticipantsItemWidgetState();
-}
-
-class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _tabController.dispose();
-  }
-
-  Future<T?> _showEditBottomSheet<T>({required T? data, required int index, bool isParticipant = false}) {
-    Participant? participant;
-    MenuItem? item;
-
-    if (data is Participant) {
-      participant = data;
-    } else if (data is MenuItem) {
-      item = data;
-    }
-
-    TextEditingController participantNameController = TextEditingController(text: participant?.name);
-    TextEditingController nameController = TextEditingController(text: item?.name);
-    TextEditingController qtyController = TextEditingController(text: item?.quantity.toString());
-    TextEditingController priceController = TextEditingController(text: item?.price.toString());
-
-    return showModalBottomSheet<T?>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16, top: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(height: 10),
-              (isParticipant)
-                  ? CustomTextFieldWidget(label: NAME, controller: participantNameController)
-                  : Column(
-                    children: [
-                      CustomTextFieldWidget(label: NAME, controller: nameController),
-                      const SizedBox(height: 16),
-                      CustomTextFieldWidget(label: QTY, controller: qtyController),
-                      const SizedBox(height: 16),
-                      CustomTextFieldWidget(label: PRICE, controller: priceController),
-                    ],
-                  ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      if (isParticipant) {
-                        // Update participant data
-                        if (participant == null) {
-                          participant = await Participant.create(name: participantNameController.text);
-                        } else {
-                          participant = participant?.copyWith(name: participantNameController.text);
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context, participant); // Return updated participant
-                        }
-                      } else {
-                        // Update item data
-                        if (item == null) {
-                          // item = MenuItem(id: 'ITM', name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
-                          item = await MenuItem.create(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
-                        } else {
-                          // Update existing item
-                          item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context, item); // Return updated item
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 107,
-                      height: 40,
-                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.save_alt, color: Theme.of(context).colorScheme.onTertiary),
-                          const SizedBox(width: 10),
-                          Text(SAVE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Visibility(
-                    visible: data != null,
-                    child: InkWell(
-                      onTap: () {
-                        if (isParticipant) {
-                          // Delete participant
-                          widget.onDeleteParticipant(List.of(widget.participants), participant!);
-                        } else {
-                          // Delete item
-                          widget.onDeleteItem(List.of(widget.items), item!);
-                        }
-                        return context.pop(null);
-                      },
-                      child: Container(
-                        width: 107,
-                        height: 40,
-                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
-                            const SizedBox(width: 10),
-                            Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _addNewItem(String tab) async {
-    Participant? participant;
-    MenuItem? menuItem;
-
-    if (tab == "Participants") {
-      participant = await _showEditBottomSheet<Participant>(data: null, index: 0, isParticipant: true);
-    } else {
-      menuItem = await _showEditBottomSheet<MenuItem>(data: null, index: 0);
-    }
-
-    _updateItem(participant: participant, item: menuItem);
-  }
-
-  void _updateItem({Participant? participant, MenuItem? item}) {
-    if (participant != null) {
-      widget.onUpdateParticipant(List.of(widget.participants), participant);
-    } else if (item != null) {
-      widget.onUpdateItem(List.of(widget.items), item);
-    }
-  }
+  const ParticipantsItemWidget({super.key, required this.participants, required this.items, required this.tabController, required this.onUpdateParticipant, required this.onUpdateItem});
 
   @override
   Widget build(BuildContext context) {
@@ -191,33 +20,9 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TabBar(controller: _tabController, tabs: const [Tab(text: "Participants"), Tab(text: "Items")]),
-          Expanded(child: TabBarView(controller: _tabController, children: [_buildParticipantsListView(List.of(widget.participants), "Participants"), _buildListView(List.of(widget.items), "Items")])),
+          TabBar(controller: tabController, tabs: const [Tab(text: "Participants"), Tab(text: "Items")]),
+          Expanded(child: TabBarView(controller: tabController, children: [_buildParticipantsListView(List.of(participants), "Participants"), _buildListView(List.of(items), "Items")])),
         ],
-      ),
-      floatingActionButton: AnimatedBuilder(
-        animation: _tabController,
-        builder: (context, child) {
-          String tabName = _tabController.index == 0 ? "Participants" : "Items";
-          return SizedBox(
-            height: 30, // Set custom height
-            width: 78,
-            child: FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(100))),
-              onPressed: () => _addNewItem(tabName),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimaryContainer),
-                  const SizedBox(width: 8),
-                  Text(ADD_ITEM, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -233,12 +38,7 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
             actionWidget:
                 (index) => IconButton(
                   icon: const Icon(Icons.edit),
-                  onPressed: () async {
-                    MenuItem? item = await _showEditBottomSheet<MenuItem>(data: list[index], index: index);
-                    if (item != null) {
-                      _updateItem(item: item);
-                    }
-                  },
+                  onPressed: () => onUpdateItem(list[index]),
                 ),
           ),
         ),
@@ -250,12 +50,7 @@ class _ParticipantsItemWidgetState extends State<ParticipantsItemWidget> with Si
     return ParticipantListView(
       participants: participants,
       icon: const Icon(Icons.edit),
-      action: (index) async {
-        Participant? participant = await _showEditBottomSheet<Participant>(data: participants[index], index: index, isParticipant: true);
-        if (participant != null) {
-          _updateItem(participant: participant);
-        }
-      },
+      action: (index) => onUpdateParticipant(participants[index]),
       physics: const AlwaysScrollableScrollPhysics(),
     );
   }

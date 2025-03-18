@@ -20,7 +20,6 @@ class TableWidget extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Header Row (Fixed at the Top)
         Row(
           children: [
             Expanded(
