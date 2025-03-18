@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:receipt_splitter/common/layout_builder_widget.dart';
 import 'package:receipt_splitter/config/shared_pref.dart';
 import 'package:receipt_splitter/model/currency.dart';
 import 'package:receipt_splitter/services/currency_service.dart';
@@ -18,9 +19,9 @@ class _CurrencyListViewState extends State<CurrencyListView> {
   late List<Currency> _filteredList;
   late List<Currency> _currencyList;
   List<Currency>? _favoriteList;
-  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(CurrencyService().findByCode('MMK'));
-  // Currency? selected = CurrencyService().findByCode('MMK');
-
+  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(
+    CurrencyService().findByCode('MMK'),
+  );
   TextEditingController? _searchController;
 
   @override
@@ -45,158 +46,127 @@ class _CurrencyListViewState extends State<CurrencyListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: AppBar(
-        scrolledUnderElevation: 0.0,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
         centerTitle: true,
-        title: Text('Currency',style: TextStyle(
-          fontSize: 18, color: Theme.of(context).colorScheme.secondaryContainer
-        ),),
-        leading: IconButton(
-          onPressed: (){
-          Navigator.of(context).pop();
-        }, icon: Icon(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          Icons.arrow_back_ios,size: 18,
-        )),
+        title: Text('Currency', style: Theme.of(context).textTheme.titleLarge),
       ),
-      body: Column(
-        children: <Widget>[
-          // const SizedBox(height: 12),
-          Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-  child: TextField(
-    controller: _searchController,
-    decoration: InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-      hintText: 'Search currency',
-      prefix: SizedBox(width: 10,),
-      suffixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondaryContainer),
-      
-      // Rounded border with dynamic color
-      filled: true,
-      fillColor:Preferences().getDarkMode() == ThemeMode.dark ?Colors.blueGrey :Colors.grey.shade200,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide.none,
-      ),
-      
-      // Focus border style
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.primary,
-          width: 1.5,
-        ),
-      ),
-
-      // Placeholder (hint) style
-      hintStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-        fontSize: 16,
-      ),
-    ),
-    onChanged: _filterSearchResults,
-  ),
-),
-
-          Expanded(
-            child: ListView(
-              // physics: widget.physics,
-              children: [
-                if (_favoriteList != null) ...[
-                  ..._favoriteList!.map<Widget>((currency) => _listRow(currency)),
-                  const Padding(padding: EdgeInsets.symmetric(horizontal: 20.0), child: Divider(thickness: 1)),
-                ],
-                ..._filteredList.map<Widget>((currency) => _listRow(currency)),
-              ],
+      body: LayoutBuilderWidget(
+        child: Column(
+          children: <Widget>[
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 14,
+                ),
+                hintText: 'Search currency',
+                suffixIcon: Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 16,
+                ),
+              ),
+              onChanged: _filterSearchResults,
             ),
-          ),
-        ],
+            SizedBox(
+              height: 15,
+            ),
+            Expanded(
+              child: ListView(
+                // physics: widget.physics,
+                children: [
+                  if (_favoriteList != null) ...[
+                    ..._favoriteList!.map<Widget>(
+                      (currency) => _listRow(currency),
+                    ),
+                    Divider(thickness: 1),
+                  ],
+                  ..._filteredList.map<Widget>(
+                    (currency) => _listRow(currency),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _listRow(Currency currency) {
-    final TextStyle titleTextStyle = _defaultTitleTextStyle; //widget.theme?.titleTextStyle ??
-    final TextStyle subtitleTextStyle = _defaultSubtitleTextStyle; //widget.theme?.subtitleTextStyle ??
-    final currencySignTextStyle = _defaultCurrencySignTextStyle; //widget.theme?.currencySignTextStyle ??
-
     return ValueListenableBuilder(
       valueListenable: selectedCurrency,
-      builder: (context,select,child) {
+      builder: (context, select, child) {
         return InkWell(
           onTap: () {
-              selectedCurrency.value = currency; 
-              Preferences().setCurrencyCode(currency.code);
+            selectedCurrency.value = currency;
+            Preferences().setCurrencyCode(currency.code);
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 9.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 16,
               children: <Widget>[
+                _flagWidget(currency),
                 Expanded(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(width: 15),
-                      _flagWidget(currency),
-                      const SizedBox(width: 15),
-                      // if (widget.showFlag) ...[
-        
-                      // ],
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // if (widget.showCurrencyCode) ...[
-                            Text(currency.code, style: titleTextStyle,),
-                            // ],
-                            // if (widget.showCurrencyName) ...[
-                            Text(
-                              currency.name,
-                              style: subtitleTextStyle,
-                              // : titleTextStyle,
-                            ),
-                            // ],
-                          ],
-                        ),
+                      Text(
+                        currency.code,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Text(
+                        currency.name,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        // : titleTextStyle,
                       ),
                     ],
                   ),
                 ),
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Text(currency.symbol, style: currencySignTextStyle)),
-                Radio(
-                  value: currency,
-                  groupValue: select,
-                  onChanged: (Currency? value) {
-                    selectedCurrency.value = value;
-                    Preferences().setCurrencyCode(value!.code);
-                  },
+                Row(
+                  children: [
+                    Text(
+                      currency.symbol,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Radio(
+                      value: currency,
+                      groupValue: select,
+                      onChanged: (Currency? value) {
+                        selectedCurrency.value = value;
+                        Preferences().setCurrencyCode(value!.code);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         );
-      }
+      },
     );
   }
 
   Widget _flagWidget(Currency currency) {
     if (currency.flag == null) {
-      return Text(
-        'NF',
-        style: TextStyle(
-          fontSize: 25, // widget.theme?.flagSize ??
-        ),
-      );
+      return Text('NF', style: TextStyle(fontSize: 25));
     }
 
     return Text(
       CurrencyUtils.currencyToEmoji(currency),
-      style: TextStyle(
-        fontSize: 25, // widget.theme?.flagSize ??
-      ),
+      style: TextStyle(fontSize: 25),
     );
   }
 
@@ -206,13 +176,16 @@ class _CurrencyListViewState extends State<CurrencyListView> {
     if (query.isEmpty) {
       searchResult.addAll(_currencyList);
     } else {
-      searchResult = _currencyList.where((c) => c.name.toLowerCase().contains(query.toLowerCase().trim()) || c.code.toLowerCase().contains(query.toLowerCase().trim())).toList();
+      searchResult =
+          _currencyList
+              .where(
+                (c) =>
+                    c.name.toLowerCase().contains(query.toLowerCase().trim()) ||
+                    c.code.toLowerCase().contains(query.toLowerCase().trim()),
+              )
+              .toList();
     }
 
     setState(() => _filteredList = searchResult);
   }
-
-  TextStyle get _defaultTitleTextStyle => TextStyle(fontSize: 17,color: Theme.of(context).colorScheme.secondaryContainer);
-  TextStyle get _defaultSubtitleTextStyle => TextStyle(fontSize: 15, color: Theme.of(context).hintColor);
-  TextStyle get _defaultCurrencySignTextStyle => TextStyle(fontSize: 11,color: Theme.of(context).colorScheme.secondaryContainer);
 }

@@ -18,8 +18,8 @@ class Preferences {
 
   final String _isDarkMode = 'isDarkMode';
   final String _currencyCode = 'currencyCode';
+
   ThemeMode getDarkMode() {
-    
     // final brightness = View.of(context).platformDispatcher.platformBrightness;
     final darkMode = _prefs.getBool(_isDarkMode) ?? false;
     return darkMode ? ThemeMode.dark : ThemeMode.light;

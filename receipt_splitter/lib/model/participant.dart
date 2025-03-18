@@ -1,5 +1,5 @@
 import '../config/app_config.dart';
-import '../module/util/id_generator_util.dart';
+import '../util/id_generator_util.dart';
 
 class Participant {
   final String id;
