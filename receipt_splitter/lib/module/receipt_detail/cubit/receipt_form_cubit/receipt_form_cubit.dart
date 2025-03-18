@@ -28,33 +28,19 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     emit(ReceiptFormUpdated(receipt: receipt));
   }
 
-  void updateParticipant({
-    required List<Participant> participants,
-    required Participant participant,
-  }) {
-    List<Participant> newParticipants = updateItemById<Participant>(
-      participants,
-      participant,
-      (p) => p.id,
-    );
+  void updateParticipant({required List<Participant> participants, required Participant participant}) {
+    List<Participant> newParticipants = updateItemById<Participant>(List.of(participants), participant, (p) => p.id);
 
     emit(ParticipantUpdated(participants: newParticipants));
   }
 
   void updateItem({required List<MenuItem> items, required MenuItem item}) {
-    List<MenuItem> newItems = updateItemById<MenuItem>(
-      items,
-      item,
-      (i) => i.id,
-    );
+    List<MenuItem> newItems = updateItemById<MenuItem>(List.of(items), item, (i) => i.id);
 
     emit(MenuItemUpdated(items: newItems));
   }
 
-  void deleteParticipant({
-    required List<Participant> participants,
-    required Participant participant,
-  }) {
+  void deleteParticipant({required List<Participant> participants, required Participant participant}) {
     List<Participant> newParticipants = List.from(participants);
     newParticipants.removeWhere((p) => p.id == participant.id);
 
@@ -75,11 +61,7 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
   /// Updates an element in [list] by matching its id.
   /// [updatedItem] is the new item that should replace the matching one.
   /// [idGetter] is a function that extracts the id from an item.
-  List<T> updateItemById<T>(
-    List<T> list,
-    T updatedItem,
-    dynamic Function(T) idGetter,
-  ) {
+  List<T> updateItemById<T>(List<T> list, T updatedItem, dynamic Function(T) idGetter) {
     final updatedId = idGetter(updatedItem);
     final index = list.indexWhere((item) => idGetter(item) == updatedId);
     if (index != -1) {

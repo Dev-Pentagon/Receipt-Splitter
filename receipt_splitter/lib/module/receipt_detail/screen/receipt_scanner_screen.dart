@@ -18,7 +18,6 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
   File? _image;
   String _recognizedText = "";
 
-
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -40,24 +39,15 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Receipt Scanner')),
+      appBar: AppBar(title: Text('Scan'), centerTitle: true),
       body: Column(
         children: [
           if (_image != null) Image.file(_image!, height: 250),
-          ElevatedButton(
-            onPressed: _pickImage,
-            child: Text('Scan Receipt'),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16),
-              child: Text(_recognizedText, style: TextStyle(fontSize: 16)),
-            ),
-          ),
+          ElevatedButton(onPressed: _pickImage, child: Text('Scan Receipt')),
+          Expanded(child: SingleChildScrollView(padding: EdgeInsets.all(16), child: Text(_recognizedText, style: TextStyle(fontSize: 16)))),
         ],
       ),
     );
