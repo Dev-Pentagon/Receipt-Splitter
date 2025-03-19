@@ -5,6 +5,7 @@ import 'package:receipt_splitter/config/app_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/currency.dart';
+import '../util/format_currency_util.dart';
 
 class Preferences {
   late SharedPreferences _prefs;
@@ -53,6 +54,7 @@ class Preferences {
   }
 
   void setCurrencyCode(Currency currency) {
+    FormatCurrencyUtil.dispose();
     _prefs.setString(_currencyCode, jsonEncode(currency.toJson()));
   }
 

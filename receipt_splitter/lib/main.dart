@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = MaterialTheme.createTextTheme(
       context,
-      fontFamily: "Roboto",
+      fontFamily: 'Roboto',
     );
     MaterialTheme theme = MaterialTheme(textTheme);
 

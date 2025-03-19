@@ -23,8 +23,9 @@ class CalculateBillUtil {
     // Process each MenuItem in the receipt.
     for (final item in receipt.items) {
       final int numItemParticipants = item.participants.length;
-      if (numItemParticipants == 0)
+      if (numItemParticipants == 0) {
         continue; // Skip items with no assigned participants.
+      }
 
       // Calculate the item's total price (price * quantity).
       final double itemTotal = item.total;

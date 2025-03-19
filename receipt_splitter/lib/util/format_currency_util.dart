@@ -16,6 +16,10 @@ class FormatCurrencyUtil {
 
   FormatCurrencyUtil._internal();
 
+  static void dispose() {
+    _instance.currency = null;
+  }
+
   /// Formats a given amount into a string representation with the appropriate currency symbol.
   String formatAmount(double amount) {
     return currency?.formatAmount(amount) ?? amount.toStringAsFixed(2);
