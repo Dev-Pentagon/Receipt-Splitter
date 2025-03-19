@@ -1,3 +1,1 @@
-class DatabaseService {
-
-}
+class DatabaseService {}

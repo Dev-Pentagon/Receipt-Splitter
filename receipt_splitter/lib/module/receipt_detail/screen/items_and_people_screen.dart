@@ -28,7 +28,13 @@ class ItemsAndPeopleScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             onPressed: () {
-              context.pushNamed(ReceiptFormScreen.receiptForm, extra: ReceiptFormScreenArguments(receipt: receipt, isNew: false));
+              context.pushNamed(
+                ReceiptFormScreen.receiptForm,
+                extra: ReceiptFormScreenArguments(
+                  receipt: receipt,
+                  isNew: false,
+                ),
+              );
             },
           ),
         ],
@@ -36,13 +42,18 @@ class ItemsAndPeopleScreen extends StatelessWidget {
       body: LayoutBuilderWidget(
         child: Column(
           spacing: 15,
-          crossAxisAlignment: receipt.participants.isNotEmpty ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+          crossAxisAlignment:
+              receipt.participants.isNotEmpty
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
           children: [
             Expanded(
               child: BlocConsumer<ItemsAndPeopleCubit, ItemsAndPeopleState>(
                 listener: (context, state) {
                   if (state is AlreadyLinked) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(PARTICIPANT_ALREADY_LINKED)));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text(PARTICIPANT_ALREADY_LINKED)),
+                    );
                   }
                 },
                 builder: (context, state) {
@@ -55,18 +66,32 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                     actionName: PEOPLE,
                     actionWidget:
                         (val) => BlocProvider(
-                          create: (context) => context.read<ItemsAndPeopleCubit>(),
+                          create:
+                              (context) => context.read<ItemsAndPeopleCubit>(),
                           child: ParticipantStackWidget(
                             menuItem: receipt.items[val],
                             onParticipantDelete: (participant) {
-                              BlocProvider.of<ItemsAndPeopleCubit>(context).removeParticipant(items: receipt.items, itemId: receipt.items[val].id, participant: participant);
+                              BlocProvider.of<ItemsAndPeopleCubit>(
+                                context,
+                              ).removeParticipant(
+                                items: receipt.items,
+                                itemId: receipt.items[val].id,
+                                participant: participant,
+                              );
                             },
                           ),
                         ),
                     enableDragTarget: true,
                     onItemDropped: (details, item) {
                       Participant participant = details.data;
-                      BlocProvider.of<ItemsAndPeopleCubit>(context).linkParticipantToItem(items: receipt.items, participants: receipt.participants, participant: participant, itemId: item.id);
+                      BlocProvider.of<ItemsAndPeopleCubit>(
+                        context,
+                      ).linkParticipantToItem(
+                        items: receipt.items,
+                        participants: receipt.participants,
+                        participant: participant,
+                        itemId: item.id,
+                      );
                     },
                   );
                 },
@@ -79,22 +104,53 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     if (receipt.participants.isNotEmpty) ...[
-                      DraggableCard(participant: Participant(id: 'PRT0', name: ALL)),
-                      VerticalDivider(width: 30, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.outlineVariant),
+                      DraggableCard(
+                        participant: Participant(id: 'PRT0', name: ALL),
+                      ),
+                      VerticalDivider(
+                        width: 30,
+                        thickness: 1,
+                        indent: 10,
+                        endIndent: 10,
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
                       ...receipt.participants.map((participant) {
-                        return Row(children: [DraggableCard(participant: participant), SizedBox(width: 15)]);
+                        return Row(
+                          children: [
+                            DraggableCard(participant: participant),
+                            SizedBox(width: 15),
+                          ],
+                        );
                       }),
                     ] else
-                      SizedBox(height: 120, child: Center(child: const Text(NO_PARTICIPANTS, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)))),
+                      SizedBox(
+                        height: 120,
+                        child: Center(
+                          child: const Text(
+                            NO_PARTICIPANTS,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: FilledButton.tonalIcon(onPressed: () {
-                context.pushNamed(PreviewScreen.preview, extra: receipt);
-              }, label: Text(NEXT, style: Theme.of(context).textTheme.labelLarge), icon: const Icon(Icons.arrow_forward)),
+              child: FilledButton.tonalIcon(
+                onPressed: () {
+                  context.pushNamed(PreviewScreen.preview, extra: receipt);
+                },
+                label: Text(
+                  NEXT,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                icon: const Icon(Icons.arrow_forward),
+              ),
             ),
           ],
         ),

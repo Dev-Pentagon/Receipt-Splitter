@@ -85,7 +85,9 @@ class Currency {
   String formatAmount(double amount) {
     final formattedNumber = _formatNumber(amount);
     final space = spaceBetweenAmountAndSymbol ? " " : "";
-    return symbolOnLeft ? "$symbol$space$formattedNumber" : "$formattedNumber$space$symbol";
+    return symbolOnLeft
+        ? "$symbol$space$formattedNumber"
+        : "$formattedNumber$space$symbol";
   }
 
   /// Helper method to format the number using the custom decimal and thousands separators.
@@ -111,6 +113,8 @@ class Currency {
     String formattedInteger = buffer.toString().split('').reversed.join('');
 
     // Join integer and fractional parts with the custom decimal separator.
-    return fractionPart.isNotEmpty ? "$formattedInteger$decimalSeparator$fractionPart" : formattedInteger;
+    return fractionPart.isNotEmpty
+        ? "$formattedInteger$decimalSeparator$fractionPart"
+        : formattedInteger;
   }
 }

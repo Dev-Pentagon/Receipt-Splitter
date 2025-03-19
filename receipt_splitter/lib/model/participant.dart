@@ -16,13 +16,7 @@ class Participant {
     return Participant._(id: id, name: name);
   }
 
-  Participant copyWith({
-    String? id,
-    String? name,
-  }) {
-    return Participant(
-      id: id ?? this.id,
-      name: name ?? this.name,
-    );
+  Participant copyWith({String? id, String? name}) {
+    return Participant(id: id ?? this.id, name: name ?? this.name);
   }
 }

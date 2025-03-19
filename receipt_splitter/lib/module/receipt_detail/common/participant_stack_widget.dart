@@ -10,7 +10,11 @@ import 'package:receipt_splitter/services/dialog_service.dart';
 class ParticipantStackWidget extends StatelessWidget {
   final MenuItem menuItem;
   final Function(Participant participant) onParticipantDelete;
-  const ParticipantStackWidget({super.key, required this.menuItem, required this.onParticipantDelete});
+  const ParticipantStackWidget({
+    super.key,
+    required this.menuItem,
+    required this.onParticipantDelete,
+  });
 
   // Offset between each circle
   final double offset = 15.0;
@@ -26,7 +30,14 @@ class ParticipantStackWidget extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () {
-          DialogService.customDialog(context, ParticipantOfItemDialog(item: menuItem, onParticipantDelete: onParticipantDelete, itemsAndPeopleCubit: context.read<ItemsAndPeopleCubit>()));
+          DialogService.customDialog(
+            context,
+            ParticipantOfItemDialog(
+              item: menuItem,
+              onParticipantDelete: onParticipantDelete,
+              itemsAndPeopleCubit: context.read<ItemsAndPeopleCubit>(),
+            ),
+          );
         },
         child: _buildParticipantStack(context),
       ),
@@ -52,9 +63,14 @@ class ParticipantStackWidget extends StatelessWidget {
                     participant: person,
                     height: 25,
                     width: 25,
-                    textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    border: Border.all(color: Theme.of(context).colorScheme.scrim),
+                    textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.scrim,
+                    ),
                   ),
                 );
               }).toList(),
@@ -77,7 +93,9 @@ class ParticipantStackWidget extends StatelessWidget {
                 participant: firstTwo[0],
                 height: 25,
                 width: 25,
-                textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 border: Border.all(color: Theme.of(context).colorScheme.scrim),
               ),
@@ -89,7 +107,9 @@ class ParticipantStackWidget extends StatelessWidget {
                 participant: firstTwo[1],
                 height: 25,
                 width: 25,
-                textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 border: Border.all(color: Theme.of(context).colorScheme.scrim),
               ),
@@ -101,8 +121,19 @@ class ParticipantStackWidget extends StatelessWidget {
                 width: 25,
                 height: 25,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).colorScheme.onInverseSurface, border: Border.all(color: Theme.of(context).colorScheme.scrim)),
-                child: Text('+$remainingCount', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.onInverseSurface,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.scrim,
+                  ),
+                ),
+                child: Text(
+                  '+$remainingCount',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
               ),
             ),
           ],
@@ -116,7 +147,12 @@ class ParticipantOfItemDialog extends StatelessWidget {
   final MenuItem item;
   final ItemsAndPeopleCubit itemsAndPeopleCubit;
   final Function(Participant participant) onParticipantDelete;
-  const ParticipantOfItemDialog({super.key, required this.item, required this.onParticipantDelete, required this.itemsAndPeopleCubit});
+  const ParticipantOfItemDialog({
+    super.key,
+    required this.item,
+    required this.onParticipantDelete,
+    required this.itemsAndPeopleCubit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,14 +169,20 @@ class ParticipantOfItemDialog extends StatelessWidget {
               child: ParticipantListView(
                 participants: item.participants,
                 icon: Icon(Icons.delete_outline),
-                action: (index) => onParticipantDelete(item.participants[index]),
+                action:
+                    (index) => onParticipantDelete(item.participants[index]),
                 physics: AlwaysScrollableScrollPhysics(),
               ),
             );
           },
         ),
       ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Close'),
+        ),
+      ],
     );
   }
 }

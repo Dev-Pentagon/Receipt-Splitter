@@ -116,24 +116,33 @@ class MaterialTheme {
   }
 
   ThemeData _theme(ColorScheme colorScheme) => ThemeData(
-     useMaterial3: true,
-     brightness: colorScheme.brightness,
-     colorScheme: colorScheme,
-     textTheme: textTheme.apply(
-       bodyColor: colorScheme.onSurface,
-       displayColor: colorScheme.onSurface,
-     ),
-     scaffoldBackgroundColor: colorScheme.surface,
-     canvasColor: colorScheme.surface,
+    useMaterial3: true,
+    brightness: colorScheme.brightness,
+    colorScheme: colorScheme,
+    textTheme: textTheme.apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+    ),
+    scaffoldBackgroundColor: colorScheme.surface,
+    canvasColor: colorScheme.surface,
   );
 
-  static TextTheme createTextTheme(BuildContext context, {required String fontFamily}) {
+  static TextTheme createTextTheme(
+    BuildContext context, {
+    required String fontFamily,
+  }) {
     TextTheme baseTextTheme = Theme.of(context).textTheme;
 
     TextTheme textTheme = baseTextTheme.copyWith(
-      displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: fontFamily),
-      displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: fontFamily),
-      displaySmall: baseTextTheme.displaySmall?.copyWith(fontFamily: fontFamily),
+      displayLarge: baseTextTheme.displayLarge?.copyWith(
+        fontFamily: fontFamily,
+      ),
+      displayMedium: baseTextTheme.displayMedium?.copyWith(
+        fontFamily: fontFamily,
+      ),
+      displaySmall: baseTextTheme.displaySmall?.copyWith(
+        fontFamily: fontFamily,
+      ),
       bodyLarge: baseTextTheme.bodyLarge?.copyWith(fontFamily: fontFamily),
       bodyMedium: baseTextTheme.bodyMedium?.copyWith(fontFamily: fontFamily),
       bodySmall: baseTextTheme.bodySmall?.copyWith(fontFamily: fontFamily),
@@ -145,8 +154,7 @@ class MaterialTheme {
     return textTheme;
   }
 
-  List<ExtendedColor> get extendedColors => [
-  ];
+  List<ExtendedColor> get extendedColors => [];
 }
 
 class ExtendedColor {

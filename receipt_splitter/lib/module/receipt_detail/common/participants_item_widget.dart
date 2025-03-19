@@ -12,18 +12,37 @@ class ParticipantsItemWidget extends StatelessWidget {
   final Function(Participant participant) onUpdateParticipant;
   final Function(MenuItem item) onUpdateItem;
 
-  const ParticipantsItemWidget({super.key, required this.participants, required this.items, required this.tabController, required this.onUpdateParticipant, required this.onUpdateItem});
+  const ParticipantsItemWidget({
+    super.key,
+    required this.participants,
+    required this.items,
+    required this.tabController,
+    required this.onUpdateParticipant,
+    required this.onUpdateItem,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TabBar(controller: tabController, tabs: const [Tab(text: "Participants"), Tab(text: "Items")]),
-          Expanded(child: TabBarView(controller: tabController, children: [_buildParticipantsListView(List.of(participants), "Participants"), _buildListView(List.of(items), "Items")])),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TabBar(
+          controller: tabController,
+          tabs: const [
+            Tab(icon: Icon(Icons.people_alt_outlined), text: "Participants"),
+            Tab(icon: Icon(Icons.list_alt_outlined), text: "Items"),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              _buildParticipantsListView(List.of(participants), "Participants"),
+              _buildListView(List.of(items), "Items"),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -36,9 +55,12 @@ class ParticipantsItemWidget extends StatelessWidget {
             items: list,
             actionName: ACTION,
             actionWidget:
-                (index) => IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => onUpdateItem(list[index]),
+                (index) => Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => onUpdateItem(list[index]),
+                  ),
                 ),
           ),
         ),
@@ -46,7 +68,10 @@ class ParticipantsItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildParticipantsListView(List<Participant> participants, String tab) {
+  Widget _buildParticipantsListView(
+    List<Participant> participants,
+    String tab,
+  ) {
     return ParticipantListView(
       participants: participants,
       icon: const Icon(Icons.edit),

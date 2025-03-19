@@ -2,14 +2,12 @@ import 'package:collection/collection.dart';
 import 'package:receipt_splitter/constants/currencies.dart';
 import 'package:receipt_splitter/model/currency.dart';
 
-
 class CurrencyService {
   final List<Currency> _currencies;
 
   CurrencyService()
-      : _currencies = currencies
-            .map((currency) => Currency.from(json: currency))
-            .toList();
+    : _currencies =
+          currencies.map((currency) => Currency.from(json: currency)).toList();
 
   ///Return list with all currencies
   List<Currency> getAll() {
@@ -19,8 +17,9 @@ class CurrencyService {
   ///Returns the first currency that mach the given code.
   Currency? findByCode(String? code) {
     final uppercaseCode = code?.toUpperCase();
-    return _currencies
-        .firstWhereOrNull((currency) => currency.code == uppercaseCode);
+    return _currencies.firstWhereOrNull(
+      (currency) => currency.code == uppercaseCode,
+    );
   }
 
   ///Returns the first currency that mach the given name.
@@ -30,8 +29,9 @@ class CurrencyService {
 
   ///Returns the first currency that mach the given number.
   Currency? findByNumber(int? number) {
-    return _currencies
-        .firstWhereOrNull((currency) => currency.number == number);
+    return _currencies.firstWhereOrNull(
+      (currency) => currency.number == number,
+    );
   }
 
   ///Returns a list with all the currencies that mach the given codes list.
@@ -48,7 +48,6 @@ class CurrencyService {
     return currencies;
   }
 }
-
 
 class CurrencyUtils {
   /// Return Flag (Emoji Unicode) of a given currency

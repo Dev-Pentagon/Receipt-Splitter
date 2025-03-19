@@ -8,7 +8,13 @@ class ParticipantListView extends StatelessWidget {
   final ScrollPhysics? physics;
   final Widget icon;
   final Function(int index) action;
-  const ParticipantListView({super.key, required this.participants, required this.icon, required this.action, this.physics});
+  const ParticipantListView({
+    super.key,
+    required this.participants,
+    required this.icon,
+    required this.action,
+    this.physics,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +25,15 @@ class ParticipantListView extends StatelessWidget {
           (context, index) => Row(
             spacing: 16,
             children: [
-              ParticipantAvatar(participant: participants[index], width: 40, height: 40),
-              Text(participants[index].name, style: Theme.of(context).textTheme.bodyLarge),
+              ParticipantAvatar(
+                participant: participants[index],
+                width: 40,
+                height: 40,
+              ),
+              Text(
+                participants[index].name,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               Spacer(),
               IconButton(
                 icon: icon,

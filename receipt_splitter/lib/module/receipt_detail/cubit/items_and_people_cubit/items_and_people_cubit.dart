@@ -8,7 +8,12 @@ part 'items_and_people_state.dart';
 class ItemsAndPeopleCubit extends Cubit<ItemsAndPeopleState> {
   ItemsAndPeopleCubit() : super(ItemsAndPeopleInitial());
 
-  void linkParticipantToItem({required List<MenuItem> items, required List<Participant> participants, required Participant participant, required String itemId}) {
+  void linkParticipantToItem({
+    required List<MenuItem> items,
+    required List<Participant> participants,
+    required Participant participant,
+    required String itemId,
+  }) {
     final item = items.firstWhere((item) => item.id == itemId);
     if (participant.id == 'PRT0') {
       // add all participants to the item, should not be duplicated.
@@ -27,7 +32,11 @@ class ItemsAndPeopleCubit extends Cubit<ItemsAndPeopleState> {
     }
   }
 
-  void removeParticipant({required List<MenuItem> items, required String itemId, required Participant participant}) {
+  void removeParticipant({
+    required List<MenuItem> items,
+    required String itemId,
+    required Participant participant,
+  }) {
     final item = items.firstWhere((item) => item.id == itemId);
     item.participants.removeWhere((p) => p.id == participant.id);
     emit(ItemsAndPeopleUpdated(items: items, fromDelete: true));

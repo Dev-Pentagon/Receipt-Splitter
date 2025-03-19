@@ -35,10 +35,30 @@ class ReceiptListScreen extends StatelessWidget {
           name: 'Fried Rice',
           quantity: 2,
           price: 9600,
-          participants: [Participant(id: 'PRT1', name: 'Wunna Kyaw'), Participant(id: 'PRT2', name: 'Kayy'), Participant(id: 'PRT3', name: 'Kyaw Lwin Soe'), Participant(id: 'PRT4', name: 'Nyein Chan Moe')],
+          participants: [
+            Participant(id: 'PRT1', name: 'Wunna Kyaw'),
+            Participant(id: 'PRT2', name: 'Kayy'),
+            Participant(id: 'PRT3', name: 'Kyaw Lwin Soe'),
+            Participant(id: 'PRT4', name: 'Nyein Chan Moe'),
+          ],
         ),
-        MenuItem(id: 'ITM2', name: 'Apple Juice', quantity: 2, price: 2700, participants: [Participant(id: 'PRT1', name: 'Wunna Kyaw'), Participant(id: 'PRT2', name: 'Kayy')]),
-        MenuItem(id: 'ITM3', name: 'French Fried', quantity: 1, price: 3700, participants: [Participant(id: 'PRT1', name: 'Wunna Kyaw')]),
+        MenuItem(
+          id: 'ITM2',
+          name: 'Apple Juice',
+          quantity: 2,
+          price: 2700,
+          participants: [
+            Participant(id: 'PRT1', name: 'Wunna Kyaw'),
+            Participant(id: 'PRT2', name: 'Kayy'),
+          ],
+        ),
+        MenuItem(
+          id: 'ITM3',
+          name: 'French Fried',
+          quantity: 1,
+          price: 3700,
+          participants: [Participant(id: 'PRT1', name: 'Wunna Kyaw')],
+        ),
         MenuItem(
           id: 'ITM4',
           name: 'Tom Yum Soup',
@@ -53,7 +73,16 @@ class ReceiptListScreen extends StatelessWidget {
             Participant(id: 'PRT6', name: 'Ye Thurein Kyaw'),
           ],
         ),
-        MenuItem(id: 'ITM5', name: 'Fried Noodles', quantity: 2, price: 7800, participants: [Participant(id: 'PRT1', name: 'Wunna Kyaw'), Participant(id: 'PRT2', name: 'Kayy')]),
+        MenuItem(
+          id: 'ITM5',
+          name: 'Fried Noodles',
+          quantity: 2,
+          price: 7800,
+          participants: [
+            Participant(id: 'PRT1', name: 'Wunna Kyaw'),
+            Participant(id: 'PRT2', name: 'Kayy'),
+          ],
+        ),
       ],
       participants: [
         Participant(id: 'PRT1', name: 'Wunna Kyaw'),
@@ -70,10 +99,20 @@ class ReceiptListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(RECEIPT_SPLITTER, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-        actions: [IconButton(icon: Icon(Icons.settings), onPressed: () {
-          context.pushNamed(SettingScreen.tag);
-        })],
+        title: Text(
+          RECEIPT_SPLITTER,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              context.pushNamed(SettingScreen.tag);
+            },
+          ),
+        ],
         centerTitle: true,
       ),
       body: LayoutBuilderWidget(
@@ -118,9 +157,13 @@ class ReceiptListScreen extends StatelessWidget {
                       heroTag: "create_receipt_fab",
                       onPressed: () {
                         context.read<FabCubit>().toggle();
-                        context.pushNamed(ReceiptFormScreen.receiptForm, extra: ReceiptFormScreenArguments(isNew: true));
+                        context.pushNamed(
+                          ReceiptFormScreen.receiptForm,
+                          extra: ReceiptFormScreenArguments(isNew: true),
+                        );
                       },
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryContainer,
                       child: Icon(Icons.add),
                     ),
                     SizedBox(height: 10),
@@ -131,7 +174,8 @@ class ReceiptListScreen extends StatelessWidget {
                         context.read<FabCubit>().toggle();
                         context.pushNamed(ReceiptScannerScreen.scan);
                       },
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryContainer,
                       child: Icon(Icons.document_scanner_outlined),
                     ),
                     SizedBox(height: 10),
@@ -145,7 +189,10 @@ class ReceiptListScreen extends StatelessWidget {
                 onPressed: () {
                   context.read<FabCubit>().toggle();
                 },
-                backgroundColor: state ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primaryContainer,
+                backgroundColor:
+                    state
+                        ? Theme.of(context).colorScheme.inversePrimary
+                        : Theme.of(context).colorScheme.primaryContainer,
                 child: Icon(state ? Icons.close : Icons.arrow_upward_outlined),
               ),
             ],

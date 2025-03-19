@@ -11,7 +11,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.enabled = true,
     this.readOnly = false,
     this.onChanged,
-    this.onTap
+    this.onTap,
   });
 
   final String label;
@@ -28,7 +28,10 @@ class CustomTextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      decoration: InputDecoration(border: OutlineInputBorder(), labelText: label),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: label,
+      ),
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       obscureText: obscureText,

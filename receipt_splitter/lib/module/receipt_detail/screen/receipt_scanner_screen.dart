@@ -31,7 +31,9 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
   Future<void> _processImage(File imageFile) async {
     final inputImage = InputImage.fromFile(imageFile);
     final textRecognizer = TextRecognizer();
-    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+    final RecognizedText recognizedText = await textRecognizer.processImage(
+      inputImage,
+    );
     await textRecognizer.close();
 
     setState(() {
@@ -47,7 +49,12 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
         children: [
           if (_image != null) Image.file(_image!, height: 250),
           ElevatedButton(onPressed: _pickImage, child: Text('Scan Receipt')),
-          Expanded(child: SingleChildScrollView(padding: EdgeInsets.all(16), child: Text(_recognizedText, style: TextStyle(fontSize: 16)))),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Text(_recognizedText, style: TextStyle(fontSize: 16)),
+            ),
+          ),
         ],
       ),
     );

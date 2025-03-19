@@ -27,7 +27,8 @@ class Preferences {
     bool? darkModePref = _prefs.getBool(_isDarkMode);
 
     if (darkModePref == null) {
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final brightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
       final bool isDarkMode = brightness == Brightness.dark;
       setDarkMode(isDarkMode);
       darkModePref = isDarkMode;
@@ -46,7 +47,9 @@ class Preferences {
       setCurrencyCode(defaultCurrency);
     }
 
-    return jsonString != null ? Currency.from(json: jsonDecode(jsonString)) : defaultCurrency;
+    return jsonString != null
+        ? Currency.from(json: jsonDecode(jsonString))
+        : defaultCurrency;
   }
 
   void setCurrencyCode(Currency currency) {

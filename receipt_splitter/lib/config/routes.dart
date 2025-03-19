@@ -24,26 +24,64 @@ class Routes {
     debugLogDiagnostics: true,
     navigatorKey: navigatorKey,
     routes: <RouteBase>[
-      GoRoute(name: splash, path: '/', builder: (context, state) => SplashScreen()),
-      GoRoute(name: ReceiptListScreen.receiptSplit, path: ReceiptListScreen.receiptSplit, builder: (context, state) => BlocProvider(create: (context) => FabCubit(), child: ReceiptListScreen())),
+      GoRoute(
+        name: splash,
+        path: '/',
+        builder: (context, state) => SplashScreen(),
+      ),
+      GoRoute(
+        name: ReceiptListScreen.receiptSplit,
+        path: ReceiptListScreen.receiptSplit,
+        builder:
+            (context, state) => BlocProvider(
+              create: (context) => FabCubit(),
+              child: ReceiptListScreen(),
+            ),
+      ),
       GoRoute(
         name: ItemsAndPeopleScreen.itemsAndPeople,
         path: ItemsAndPeopleScreen.itemsAndPeople,
-        builder: (context, state) => BlocProvider(create: (context) => ItemsAndPeopleCubit(), child: ItemsAndPeopleScreen(receipt: state.extra as Receipt)),
+        builder:
+            (context, state) => BlocProvider(
+              create: (context) => ItemsAndPeopleCubit(),
+              child: ItemsAndPeopleScreen(receipt: state.extra as Receipt),
+            ),
       ),
       GoRoute(
         name: ReceiptFormScreen.receiptForm,
         path: ReceiptFormScreen.receiptForm,
         builder:
             (context, state) => MultiBlocProvider(
-              providers: [BlocProvider(create: (context) => ReceiptTypeCubit()), BlocProvider(create: (context) => ReceiptFormCubit())],
-              child: ReceiptFormScreen(arguments: state.extra as ReceiptFormScreenArguments),
+              providers: [
+                BlocProvider(create: (context) => ReceiptTypeCubit()),
+                BlocProvider(create: (context) => ReceiptFormCubit()),
+              ],
+              child: ReceiptFormScreen(
+                arguments: state.extra as ReceiptFormScreenArguments,
+              ),
             ),
       ),
-      GoRoute(name: ReceiptScannerScreen.scan, path: ReceiptScannerScreen.scan, builder: (context, state) => ReceiptScannerScreen()),
-      GoRoute(name: SettingScreen.tag, path: SettingScreen.tag, builder: (context, state) => SettingScreen()),
-      GoRoute(name: CurrencyListView.tag, path: CurrencyListView.tag, builder: (context, state) => CurrencyListView()),
-      GoRoute(name: PreviewScreen.preview, path: PreviewScreen.preview, builder: (context, state) => PreviewScreen(receipt: state.extra as Receipt)),
+      GoRoute(
+        name: ReceiptScannerScreen.scan,
+        path: ReceiptScannerScreen.scan,
+        builder: (context, state) => ReceiptScannerScreen(),
+      ),
+      GoRoute(
+        name: SettingScreen.tag,
+        path: SettingScreen.tag,
+        builder: (context, state) => SettingScreen(),
+      ),
+      GoRoute(
+        name: CurrencyListView.tag,
+        path: CurrencyListView.tag,
+        builder: (context, state) => CurrencyListView(),
+      ),
+      GoRoute(
+        name: PreviewScreen.preview,
+        path: PreviewScreen.preview,
+        builder:
+            (context, state) => PreviewScreen(receipt: state.extra as Receipt),
+      ),
     ],
   );
 }

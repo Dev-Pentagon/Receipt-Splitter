@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/module/receipt_detail/screen/items_and_people_screen.dart';
-import 'package:receipt_splitter/services/date_time_service.dart';
+
+import '../../../util/date_time_util.dart';
 
 class ReceiptItem extends StatelessWidget {
   const ReceiptItem({super.key, required this.receipt, required this.onDelete});
@@ -22,9 +23,19 @@ class ReceiptItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(receipt.name!, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  receipt.name!,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
                 SizedBox(height: 8),
-                Text(DateTimeService.dayMonthYear(receipt.date!), style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                Text(
+                  DateTimeUtil.dayMonthYear(receipt.date!),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),

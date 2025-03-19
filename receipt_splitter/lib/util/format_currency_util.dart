@@ -22,7 +22,10 @@ class FormatCurrencyUtil {
   }
 
   String formatTaxTitle(double percentage, TaxType taxType) {
-    String taxTypeText = taxType == TaxType.inclusive ? ' (incl. $percentage%)' : ' (excl. $percentage%)';
+    String taxTypeText =
+        taxType == TaxType.inclusive
+            ? ' (incl. $percentage%)'
+            : ' (excl. $percentage%)';
     return '$TAX $taxTypeText';
   }
 

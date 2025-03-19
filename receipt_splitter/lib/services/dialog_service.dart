@@ -1,16 +1,49 @@
 import 'package:flutter/material.dart';
 
 class DialogService {
-  static Future<void> showSuccessDialog({required BuildContext context, required String title, required String message, VoidCallback? onConfirm}) {
-    return _showDialog(context: context, title: title, message: message, confirmText: "OK", onConfirm: onConfirm ?? () => Navigator.pop(context));
+  static Future<void> showSuccessDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    VoidCallback? onConfirm,
+  }) {
+    return _showDialog(
+      context: context,
+      title: title,
+      message: message,
+      confirmText: "OK",
+      onConfirm: onConfirm ?? () => Navigator.pop(context),
+    );
   }
 
-  static Future<void> showWarningDialog({required BuildContext context, required String title, required String message, VoidCallback? onConfirm}) {
-    return _showDialog(context: context, title: title, message: message, confirmText: "Understood", onConfirm: onConfirm ?? () => Navigator.pop(context));
+  static Future<void> showWarningDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    VoidCallback? onConfirm,
+  }) {
+    return _showDialog(
+      context: context,
+      title: title,
+      message: message,
+      confirmText: "Understood",
+      onConfirm: onConfirm ?? () => Navigator.pop(context),
+    );
   }
 
-  static Future<void> showErrorDialog({required BuildContext context, required String title, required String message, VoidCallback? onConfirm}) {
-    return _showDialog(context: context, title: title, message: message, confirmText: "Retry", onConfirm: onConfirm ?? () => Navigator.pop(context));
+  static Future<void> showErrorDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    VoidCallback? onConfirm,
+  }) {
+    return _showDialog(
+      context: context,
+      title: title,
+      message: message,
+      confirmText: "Retry",
+      onConfirm: onConfirm ?? () => Navigator.pop(context),
+    );
   }
 
   static Future<void> showConfirmationDialog({
@@ -22,7 +55,15 @@ class DialogService {
     String confirmText = "Yes",
     String cancelText = "No",
   }) {
-    return _showDialog(context: context, title: title, message: message, confirmText: confirmText, cancelText: cancelText, onConfirm: onConfirm, onCancel: onCancel ?? () => Navigator.pop(context));
+    return _showDialog(
+      context: context,
+      title: title,
+      message: message,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      onConfirm: onConfirm,
+      onCancel: onCancel ?? () => Navigator.pop(context),
+    );
   }
 
   static Future<void> showLoadingDialog({required BuildContext context}) async {
@@ -31,10 +72,19 @@ class DialogService {
       barrierDismissible: false, // Prevents dismissing
       builder:
           (context) => Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [CircularProgressIndicator(), const SizedBox(height: 16), Text("Loading...", style: TextStyle(fontSize: 16))]),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text("Loading...", style: TextStyle(fontSize: 16)),
+                ],
+              ),
             ),
           ),
     );
@@ -55,10 +105,16 @@ class DialogService {
       barrierDismissible: false,
       builder:
           (context) => AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
             content: Text(message),
-            actions: [if (cancelText != null) TextButton(onPressed: onCancel, child: Text(cancelText)), TextButton(onPressed: onConfirm, child: Text(confirmText))],
+            actions: [
+              if (cancelText != null)
+                TextButton(onPressed: onCancel, child: Text(cancelText)),
+              TextButton(onPressed: onConfirm, child: Text(confirmText)),
+            ],
           ),
     );
   }

@@ -27,8 +27,8 @@ class MenuItem {
     required this.quantity,
     required this.price,
     List<Participant>? participants,
-  })  : participants = participants ?? [],
-        total = price * quantity;
+  }) : participants = participants ?? [],
+       total = price * quantity;
 
   // Asynchronous factory method to generate ID
   static Future<MenuItem> create({
@@ -37,12 +37,7 @@ class MenuItem {
     required double price,
   }) async {
     final id = await IdGeneratorUtil.generateId(IdentifierType.menuItem);
-    return MenuItem._(
-      id: id,
-      name: name,
-      quantity: quantity,
-      price: price,
-    );
+    return MenuItem._(id: id, name: name, quantity: quantity, price: price);
   }
 
   MenuItem copyWith({
@@ -57,7 +52,9 @@ class MenuItem {
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
-      participants: participants ?? List.from(this.participants), // Prevent list mutation issues
+      participants:
+          participants ??
+          List.from(this.participants), // Prevent list mutation issues
     );
   }
 }

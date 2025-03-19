@@ -19,13 +19,23 @@ class DraggableCard extends StatelessWidget {
             right: -5,
             top: -5,
             child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(20)),
-              child: Icon(Icons.add_circle_outline, color: Theme.of(context).colorScheme.onPrimary, size: 20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: Theme.of(context).colorScheme.onPrimary,
+                size: 20,
+              ),
             ),
           ),
         ],
       ),
-      childWhenDragging: _ParticipantCard(participant: participant, opacity: 0.75),
+      childWhenDragging: _ParticipantCard(
+        participant: participant,
+        opacity: 0.75,
+      ),
       child: _ParticipantCard(participant: participant),
     );
   }
@@ -43,14 +53,23 @@ class _ParticipantCard extends StatelessWidget {
       child: Container(
         width: 100,
         height: 120,
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(20),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 8.5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ParticipantAvatar(participant: participant),
             const SizedBox(height: 6),
-            Text(participant.name, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface, overflow: TextOverflow.ellipsis)),
+            Text(
+              participant.name,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),

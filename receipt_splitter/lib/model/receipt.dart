@@ -15,7 +15,16 @@ class Receipt {
   List<Participant> participants;
   List<MenuItem> items;
 
-  Receipt({this.id, this.name, this.date, this.serviceCharges, this.tax, this.taxType, this.participants = const [], this.items = const []});
+  Receipt({
+    this.id,
+    this.name,
+    this.date,
+    this.serviceCharges,
+    this.tax,
+    this.taxType,
+    this.participants = const [],
+    this.items = const [],
+  });
 
   double get subTotal {
     return items.fold(0, (sum, item) => sum + item.total);
@@ -30,7 +39,9 @@ class Receipt {
   }
 
   double get total {
-    return subTotal + serviceChargesAmount + (taxType == TaxType.inclusive ? 0 : taxAmount);
+    return subTotal +
+        serviceChargesAmount +
+        (taxType == TaxType.inclusive ? 0 : taxAmount);
   }
 
   List<ParticipantBill> get bill => CalculateBillUtil.splitReceipt(this);
