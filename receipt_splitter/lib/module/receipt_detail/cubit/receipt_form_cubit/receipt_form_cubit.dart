@@ -17,9 +17,9 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
   }
 
   void saveForm(Receipt receipt) async {
-    // TODO: Implement save form logic to Database
     final String id = await IdGeneratorUtil.generateId(IdentifierType.receipt);
     receipt.id = id;
+    // TODO: Implement save form logic to Database
     emit(ReceiptFormSaved(receipt: receipt));
   }
 

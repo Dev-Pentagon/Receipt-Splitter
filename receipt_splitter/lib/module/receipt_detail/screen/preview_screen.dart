@@ -1,14 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_to_pdf/export_frame.dart';
 import 'package:receipt_splitter/common/layout_builder_widget.dart';
 import 'package:receipt_splitter/extension/route_extension.dart';
 import 'package:receipt_splitter/model/participant_bill.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participant_avatar.dart';
-import 'package:receipt_splitter/util/date_time_util.dart';
-import 'package:receipt_splitter/util/pdf_file_util.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../../../constants/strings.dart';
@@ -69,14 +64,19 @@ class PreviewScreen extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   onPressed: () async {
-                    Uint8List imageData = await screenshotController
-                        .captureFromLongWidget(
-                          PdfView(
-                            receipt: receipt,
-                            formatCurrencyUtil: formatCurrencyUtil,
-                            frameId: pdfViewFrameId,
-                          ),
-                        );
+                    // Uint8List imageData = await screenshotController
+                    //     .captureFromWidget(
+                    //       PdfView(
+                    //         receipt: receipt,
+                    //         formatCurrencyUtil: formatCurrencyUtil,
+                    //         frameId: pdfViewFrameId,
+                    //       ),
+                    //       context: context,
+                    //     );
+                    // await ExportUtil.exportImage(
+                    //   fileName: receipt.name!,
+                    //   data: imageData,
+                    // );
                   },
                   label: Text(EXPORT),
                   icon: const Icon(Icons.file_open_outlined),
@@ -115,93 +115,12 @@ class PreviewScreen extends StatelessWidget {
   }
 }
 
-class PdfView extends StatelessWidget {
-  final Receipt receipt;
-  final FormatCurrencyUtil formatCurrencyUtil;
-  final String frameId;
-  const PdfView({
-    super.key,
-    required this.receipt,
-    required this.formatCurrencyUtil,
-    required this.frameId,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context).copyWith(
-      textTheme: Theme.of(context).textTheme.apply(fontFamily: 'Roboto'),
-    );
-
-    return Material(
-      child: Theme(
-        data: theme,
-        child: ExportFrame(
-          frameId: frameId,
-          exportDelegate: PdfFileUtil.exportDelegate,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      receipt.name!,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-                LayoutBuilderWidget(
-                  top: 0,
-                  bottom: 0,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 15,
-                    children: [
-                      Text(
-                        DateTimeUtil.dayMonthYear(receipt.date!),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      _ParticipantBillListView(
-                        receipt: receipt,
-                        formatCurrencyUtil: formatCurrencyUtil,
-                        expand: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 20,
-                  ).copyWith(bottom: 40),
-                  child: _TotalBillSection(
-                    formatCurrencyUtil: formatCurrencyUtil,
-                    receipt: receipt,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _ParticipantBillListView extends StatelessWidget {
   final Receipt receipt;
   final FormatCurrencyUtil formatCurrencyUtil;
-  final bool expand;
-  final ScrollPhysics? physics;
   const _ParticipantBillListView({
     required this.receipt,
     required this.formatCurrencyUtil,
-    this.expand = false,
-    this.physics,
   });
 
   @override
@@ -209,13 +128,9 @@ class _ParticipantBillListView extends StatelessWidget {
     return ListView.separated(
       shrinkWrap: true,
       itemCount: receipt.bill.length,
-      physics: physics,
       itemBuilder: (context, index) {
         final ParticipantBill participantBill = receipt.bill[index];
         return ExpansionTile(
-          initiallyExpanded: expand,
-          showTrailingIcon: !expand,
-          enabled: !expand,
           visualDensity: VisualDensity.compact,
           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           maintainState: true,
