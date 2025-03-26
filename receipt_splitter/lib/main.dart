@@ -40,6 +40,8 @@ class MyApp extends StatelessWidget {
       builder: (context, themeMode) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [],
+          locale: const Locale('en', 'US'),
           title: 'Receipt Splitter',
           themeMode: themeMode,
           theme: theme.light(),
