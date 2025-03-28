@@ -18,7 +18,7 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
 
   void saveForm(Receipt receipt) async {
     final String id = await IdGeneratorUtil.generateId(IdentifierType.receipt);
-    receipt.id = id;
+    receipt.uid = id;
     // TODO: Implement save form logic to Database
     emit(ReceiptFormSaved(receipt: receipt));
   }
@@ -35,7 +35,7 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     List<Participant> newParticipants = updateItemById<Participant>(
       List.of(participants),
       participant,
-      (p) => p.id,
+      (p) => p.uid,
     );
 
     emit(ParticipantUpdated(participants: newParticipants));
@@ -45,7 +45,7 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     List<MenuItem> newItems = updateItemById<MenuItem>(
       List.of(items),
       item,
-      (i) => i.id,
+      (i) => i.uid,
     );
 
     emit(MenuItemUpdated(items: newItems));
@@ -56,14 +56,14 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     required Participant participant,
   }) {
     List<Participant> newParticipants = List.from(participants);
-    newParticipants.removeWhere((p) => p.id == participant.id);
+    newParticipants.removeWhere((p) => p.uid == participant.uid);
 
     emit(ParticipantUpdated(participants: newParticipants));
   }
 
   void deleteItem({required List<MenuItem> items, required MenuItem item}) {
     List<MenuItem> newItems = List.from(items);
-    newItems.removeWhere((i) => i.id == item.id);
+    newItems.removeWhere((i) => i.uid == item.uid);
 
     emit(MenuItemUpdated(items: newItems));
   }

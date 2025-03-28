@@ -17,7 +17,7 @@ class CalculateBillUtil {
     // Map to collect bill items for each participant.
     final Map<String, List<BillMenuItem>> participantItems = {};
     for (final participant in receipt.participants) {
-      participantItems[participant.id] = [];
+      participantItems[participant.uid] = [];
     }
 
     // Process each MenuItem in the receipt.
@@ -49,7 +49,7 @@ class CalculateBillUtil {
               receipt.taxType ??
               TaxType.exclusive, // Provide a default if null.
         );
-        participantItems[participant.id]!.add(billItem);
+        participantItems[participant.uid]!.add(billItem);
       }
     }
 
@@ -71,7 +71,7 @@ class CalculateBillUtil {
     // Build ParticipantBill for each participant.
     final List<ParticipantBill> bills = [];
     for (final participant in receipt.participants) {
-      final items = participantItems[participant.id]!;
+      final items = participantItems[participant.uid]!;
       final totalTax = items.fold(0.0, (sum, item) => sum + item.taxAmount);
       final totalPrice =
           items.fold(0.0, (sum, item) => sum + item.totalPrice) +

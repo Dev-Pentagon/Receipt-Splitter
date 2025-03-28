@@ -75,7 +75,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                                 context,
                               ).removeParticipant(
                                 items: receipt.items,
-                                itemId: receipt.items[val].id,
+                                itemId: receipt.items[val].uid,
                                 participant: participant,
                               );
                             },
@@ -90,7 +90,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                         items: receipt.items,
                         participants: receipt.participants,
                         participant: participant,
-                        itemId: item.id,
+                        itemId: item.uid,
                       );
                     },
                   );
@@ -105,7 +105,7 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                   children: [
                     if (receipt.participants.isNotEmpty) ...[
                       DraggableCard(
-                        participant: Participant(id: 'PRT0', name: ALL),
+                        participant: Participant(uid: 'PRT0', name: ALL),
                       ),
                       VerticalDivider(
                         width: 30,

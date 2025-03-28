@@ -14,16 +14,16 @@ class ItemsAndPeopleCubit extends Cubit<ItemsAndPeopleState> {
     required Participant participant,
     required String itemId,
   }) {
-    final item = items.firstWhere((item) => item.id == itemId);
-    if (participant.id == 'PRT0') {
+    final item = items.firstWhere((item) => item.uid == itemId);
+    if (participant.uid == 'PRT0') {
       // add all participants to the item, should not be duplicated.
       for (Participant p in participants) {
-        if (item.participants.where((i) => i.id == p.id).isEmpty) {
+        if (item.participants.where((i) => i.uid == p.uid).isEmpty) {
           item.participants.add(p);
         }
       }
     } else {
-      if (item.participants.where((p) => p.id == participant.id).isEmpty) {
+      if (item.participants.where((p) => p.uid == participant.uid).isEmpty) {
         item.participants.add(participant);
         emit(ItemsAndPeopleUpdated(items: items, fromDelete: false));
       } else {
@@ -37,8 +37,8 @@ class ItemsAndPeopleCubit extends Cubit<ItemsAndPeopleState> {
     required String itemId,
     required Participant participant,
   }) {
-    final item = items.firstWhere((item) => item.id == itemId);
-    item.participants.removeWhere((p) => p.id == participant.id);
+    final item = items.firstWhere((item) => item.uid == itemId);
+    item.participants.removeWhere((p) => p.uid == participant.uid);
     emit(ItemsAndPeopleUpdated(items: items, fromDelete: true));
   }
 }

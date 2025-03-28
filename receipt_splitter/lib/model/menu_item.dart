@@ -4,7 +4,7 @@ import '../config/app_config.dart';
 import '../util/id_generator_util.dart';
 
 class MenuItem {
-  final String id;
+  final String uid;
   final String name;
   final int quantity;
   final double price;
@@ -13,7 +13,7 @@ class MenuItem {
 
   // Private constructor for internal use
   MenuItem._({
-    required this.id,
+    required this.uid,
     required this.name,
     required this.quantity,
     required this.price,
@@ -22,7 +22,7 @@ class MenuItem {
 
   // Standard constructor (requires id)
   MenuItem({
-    required this.id,
+    required this.uid,
     required this.name,
     required this.quantity,
     required this.price,
@@ -37,7 +37,7 @@ class MenuItem {
     required double price,
   }) async {
     final id = await IdGeneratorUtil.generateId(IdentifierType.menuItem);
-    return MenuItem._(id: id, name: name, quantity: quantity, price: price);
+    return MenuItem._(uid: id, name: name, quantity: quantity, price: price);
   }
 
   MenuItem copyWith({
@@ -48,7 +48,7 @@ class MenuItem {
     List<Participant>? participants,
   }) {
     return MenuItem(
-      id: id ?? this.id,
+      uid: id ?? this.uid,
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,

@@ -1,3 +1,4 @@
+import 'package:objectbox/objectbox.dart';
 import 'package:receipt_splitter/model/participant_bill.dart';
 import 'package:receipt_splitter/model/tax_type.dart';
 
@@ -5,9 +6,16 @@ import '../util/calculate_bill_util.dart';
 import 'menu_item.dart';
 import 'participant.dart';
 
+@Entity()
 class Receipt {
-  String? id;
+  @Id(assignable: true)
+  int id = 0;
+
+  // @Unique(onConflict: ConflictStrategy.replace)
+  String? uid;
   String? name;
+
+  @Property(type: PropertyType.date)
   DateTime? date;
   double? serviceCharges;
   double? tax;
@@ -16,7 +24,7 @@ class Receipt {
   List<MenuItem> items;
 
   Receipt({
-    this.id,
+    this.uid,
     this.name,
     this.date,
     this.serviceCharges,
