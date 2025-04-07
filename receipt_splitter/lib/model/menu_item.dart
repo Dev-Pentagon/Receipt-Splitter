@@ -1,7 +1,6 @@
-import 'package:receipt_splitter/model/participant.dart';
-
 import '../config/app_config.dart';
 import '../util/id_generator_util.dart';
+import 'participant.dart';
 
 class MenuItem {
   final String uid;
