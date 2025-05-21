@@ -34,3 +34,17 @@ final class MenuItemUpdated extends ReceiptFormState {
 
   MenuItemUpdated({required this.items});
 }
+
+final class ReceiptFormSaveFailed extends ReceiptFormState {
+  final String message;
+
+  ReceiptFormSaveFailed({required this.message});
+}
+
+final class ReceiptDeletedSuccessfully extends ReceiptFormState {}
+
+final class ReceiptDeletedFailed extends ReceiptFormState {
+  final String message;
+
+  ReceiptDeletedFailed({required this.message});
+}

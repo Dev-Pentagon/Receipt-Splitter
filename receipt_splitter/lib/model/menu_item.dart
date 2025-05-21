@@ -56,4 +56,24 @@ class MenuItem {
           List.from(this.participants), // Prevent list mutation issues
     );
   }
+
+  Map<String, dynamic> toMap(String receiptId) {
+    return {
+      'id': uid,
+      'name': name,
+      'quantity': quantity,
+      'price': price,
+      'receipt_id': receiptId,
+    };
+  }
+
+  factory MenuItem.fromMap(Map<String, dynamic> map, List<Participant> participants) {
+    return MenuItem(
+      uid: map['id'],
+      name: map['name'],
+      quantity: map['quantity'],
+      price: map['price'],
+      participants: participants,
+    );
+  }
 }

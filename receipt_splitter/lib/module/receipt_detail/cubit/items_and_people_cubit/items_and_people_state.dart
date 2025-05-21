@@ -14,4 +14,8 @@ final class ItemsAndPeopleUpdated extends ItemsAndPeopleState {
 
 final class AlreadyLinked extends ItemsAndPeopleState {}
 
-final class DialogUpdated extends ItemsAndPeopleState {}
+class ItemsAndPeopleFailed extends ItemsAndPeopleState {
+  final String message;
+
+  ItemsAndPeopleFailed({required this.message});
+}

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/model/receipt.dart';
 import 'package:receipt_splitter/module/receipt_detail/screen/items_and_people_screen.dart';
+import 'package:receipt_splitter/module/receipt_list/cubit/receipt_list_cubit/receipt_list_cubit.dart';
 
 import '../../../util/date_time_util.dart';
 
@@ -15,7 +17,11 @@ class ReceiptItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: receipt);
+        context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: receipt).then((value) {
+          if (context.mounted) {
+            context.read<ReceiptListCubit>().loadReceipts();
+          }
+        });
       },
       child: Row(
         children: [

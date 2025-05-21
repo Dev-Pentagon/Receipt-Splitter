@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:receipt_splitter/constants/strings.dart';
 
 class EmptyScreen extends StatelessWidget {
-  const EmptyScreen({super.key});
+  final String title;
+  final String? description;
+  const EmptyScreen({super.key, required this.title, this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -10,20 +11,11 @@ class EmptyScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            NO_RECEIPT_FOUND,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            START_SCANNING_RECEIPT,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
+          Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          if (description != null) ...[
+            const SizedBox(height: 10),
+            Text(description!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          ],
         ],
       ),
     );

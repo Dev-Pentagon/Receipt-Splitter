@@ -45,4 +45,32 @@ class Receipt {
   }
 
   List<ParticipantBill> get bill => CalculateBillUtil.splitReceipt(this);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': uid,
+      'name': name,
+      'date': date?.toIso8601String(),
+      'tax': tax,
+      'service_charges': serviceCharges,
+      'tax_type': taxType?.index,
+    };
+  }
+
+  factory Receipt.fromMap(
+      Map<String, dynamic> map,
+      List<Participant> participants,
+      List<MenuItem> items,
+      ) {
+    return Receipt(
+      uid: map['id'],
+      name: map['name'],
+      date: DateTime.parse(map['date']),
+      tax: map['tax'],
+      serviceCharges: map['service_charges'],
+      taxType: TaxType.values[map['tax_type']],
+      items: items,
+      participants: participants,
+    );
+  }
 }

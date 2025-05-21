@@ -19,4 +19,18 @@ class Participant {
   Participant copyWith({String? id, String? name}) {
     return Participant(uid: id ?? uid, name: name ?? this.name);
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': uid,
+      'name': name,
+    };
+  }
+
+  factory Participant.fromMap(Map<String, dynamic> map) {
+    return Participant(
+      uid: map['id'],
+      name: map['name'],
+    );
+  }
 }
