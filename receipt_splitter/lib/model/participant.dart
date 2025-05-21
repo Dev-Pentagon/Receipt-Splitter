@@ -17,6 +17,6 @@ class Participant {
   }
 
   Participant copyWith({String? id, String? name}) {
-    return Participant(uid: id ?? this.uid, name: name ?? this.name);
+    return Participant(uid: id ?? uid, name: name ?? this.name);
   }
 }

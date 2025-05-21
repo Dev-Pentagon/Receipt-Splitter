@@ -47,7 +47,7 @@ class MenuItem {
     List<Participant>? participants,
   }) {
     return MenuItem(
-      uid: id ?? this.uid,
+      uid: id ?? uid,
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
