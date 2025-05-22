@@ -15,7 +15,7 @@ class ExportUtil {
     final pdf = pw.Document();
     final formatCurrencyUtil = FormatCurrencyUtil();
 
-    final fontData = await rootBundle.load('fonts/Roboto-Regular.ttf');
+    final fontData = await rootBundle.load('fonts/NotoSans-Regular.ttf');
     final ttf = pw.Font.ttf(fontData);
 
     pdf.addPage(
@@ -44,19 +44,19 @@ class ExportUtil {
                     ...bill.items.map(
                       (item) => pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [pw.Text(item.name), pw.Text(formatCurrencyUtil.formatAmount(item.totalPrice), style: pw.TextStyle(font: ttf))],
+                        children: [pw.Text(item.name), pw.Text(formatCurrencyUtil.formatAmountWithCode(item.totalPrice))],
                       ),
                     ),
                     pw.Divider(),
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [pw.Text(formatCurrencyUtil.formatTaxTitle(receipt.tax!, receipt.taxType!)), pw.Text(formatCurrencyUtil.formatAmount(bill.totalTax), style: pw.TextStyle(font: ttf))],
+                      children: [pw.Text(formatCurrencyUtil.formatTaxTitle(receipt.tax!, receipt.taxType!)), pw.Text(formatCurrencyUtil.formatAmountWithCode(bill.totalTax))],
                     ),
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(formatCurrencyUtil.formatServiceChargeTitle(receipt.serviceCharges!)),
-                        pw.Text(formatCurrencyUtil.formatAmount(bill.serviceCharge), style: pw.TextStyle(font: ttf)),
+                        pw.Text(formatCurrencyUtil.formatAmountWithCode(bill.serviceCharge)),
                       ],
                     ),
                     pw.SizedBox(height: 4),
@@ -64,7 +64,7 @@ class ExportUtil {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text("Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text(formatCurrencyUtil.formatAmount(bill.totalPrice), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: ttf)),
+                        pw.Text(formatCurrencyUtil.formatAmountWithCode(bill.totalPrice), style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       ],
                     ),
                     pw.Divider(thickness: 2),
@@ -75,16 +75,16 @@ class ExportUtil {
               pw.SizedBox(height: 20),
               pw.Text("Summary", style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 8),
-              pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text("Subtotal"), pw.Text(formatCurrencyUtil.formatAmount(receipt.subTotal), style: pw.TextStyle(font: ttf))]),
+              pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text("Subtotal"), pw.Text(formatCurrencyUtil.formatAmountWithCode(receipt.subTotal))]),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [pw.Text(formatCurrencyUtil.formatTaxTitle(receipt.tax!, receipt.taxType!)), pw.Text(formatCurrencyUtil.formatAmount(receipt.taxAmount), style: pw.TextStyle(font: ttf))],
+                children: [pw.Text(formatCurrencyUtil.formatTaxTitle(receipt.tax!, receipt.taxType!)), pw.Text(formatCurrencyUtil.formatAmountWithCode(receipt.taxAmount))],
               ),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(formatCurrencyUtil.formatServiceChargeTitle(receipt.serviceCharges!)),
-                  pw.Text(formatCurrencyUtil.formatAmount(receipt.serviceChargesAmount), style: pw.TextStyle(font: ttf)),
+                  pw.Text(formatCurrencyUtil.formatAmountWithCode(receipt.serviceChargesAmount)),
                 ],
               ),
               pw.Divider(),
@@ -92,7 +92,7 @@ class ExportUtil {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text("Total", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                  pw.Text(formatCurrencyUtil.formatAmount(receipt.total), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: ttf)),
+                  pw.Text(formatCurrencyUtil.formatAmountWithCode(receipt.total), style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                 ],
               ),
             ],

@@ -25,6 +25,10 @@ class FormatCurrencyUtil {
     return currency?.formatAmount(amount) ?? amount.toStringAsFixed(2);
   }
 
+  String formatAmountWithCode(double amount) {
+    return currency?.formatAmountWithCode(amount) ?? amount.toStringAsFixed(2);
+  }
+
   String formatTaxTitle(double percentage, TaxType taxType) {
     String taxTypeText =
         taxType == TaxType.inclusive
