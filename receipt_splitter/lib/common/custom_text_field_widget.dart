@@ -10,6 +10,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.enabled = true,
     this.readOnly = false,
+    this.validator,
     this.onChanged,
     this.onTap,
   });
@@ -21,17 +22,16 @@ class CustomTextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final bool enabled;
   final bool readOnly;
+  final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: label,
-      ),
+      decoration: InputDecoration(border: OutlineInputBorder(), labelText: label),
+      validator: validator,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       obscureText: obscureText,

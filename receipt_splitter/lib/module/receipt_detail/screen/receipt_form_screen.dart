@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:receipt_splitter/common/custom_radio_button.dart';
 import 'package:receipt_splitter/common/custom_text_field_widget.dart';
 import 'package:receipt_splitter/constants/strings.dart';
+import 'package:receipt_splitter/extension/route_extension.dart';
 import 'package:receipt_splitter/model/tax_type.dart';
 import 'package:receipt_splitter/module/receipt_detail/common/participants_item_widget.dart';
 import 'package:receipt_splitter/module/receipt_detail/cubit/receipt_form_cubit/receipt_form_cubit.dart';
 import 'package:receipt_splitter/module/receipt_detail/cubit/receipt_type_cubit.dart';
+import 'package:receipt_splitter/module/receipt_list/screen/receipt_list_screen.dart';
 import 'package:receipt_splitter/services/dialog_service.dart';
 
 import '../../../common/layout_builder_widget.dart';
@@ -35,6 +37,7 @@ class ReceiptFormScreen extends StatefulWidget {
 
 class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -83,15 +86,17 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
   }
 
   void saveForm() {
-    receipt.name = _nameController.text;
-    receipt.date = currentDate;
-    receipt.serviceCharges = double.tryParse(_serviceChargeController.text) ?? 0;
-    receipt.tax = double.tryParse(_taxController.text) ?? 0;
-    receipt.taxType = context.read<ReceiptTypeCubit>().state;
-    if (isNew) {
-      BlocProvider.of<ReceiptFormCubit>(context).saveForm(receipt);
-    } else {
-      BlocProvider.of<ReceiptFormCubit>(context).updateForm(receipt);
+    if (_formKey.currentState!.validate()) {
+      receipt.name = _nameController.text;
+      receipt.date = currentDate;
+      receipt.serviceCharges = double.tryParse(_serviceChargeController.text) ?? 0;
+      receipt.tax = double.tryParse(_taxController.text) ?? 0;
+      receipt.taxType = context.read<ReceiptTypeCubit>().state;
+      if (isNew) {
+        BlocProvider.of<ReceiptFormCubit>(context).saveForm(receipt);
+      } else {
+        BlocProvider.of<ReceiptFormCubit>(context).updateForm(receipt);
+      }
     }
   }
 
@@ -111,9 +116,17 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
 
   void _updateItem({Participant? participant, MenuItem? item}) {
     if (participant != null) {
-      BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: receipt.participants, participant: participant, receiptId: receipt.uid!);
+      BlocProvider.of<ReceiptFormCubit>(context).updateParticipant(participants: receipt.participants, participant: participant, items: receipt.items, receiptId: receipt.uid!);
     } else if (item != null) {
       BlocProvider.of<ReceiptFormCubit>(context).updateItem(items: receipt.items, item: item, receiptId: receipt.uid!);
+    }
+  }
+
+  void _deleteItem({Participant? participant, MenuItem? item}) {
+    if (participant != null) {
+      BlocProvider.of<ReceiptFormCubit>(context).deleteParticipant(participants: receipt.participants, items: receipt.items, participant: participant);
+    } else if (item != null) {
+      BlocProvider.of<ReceiptFormCubit>(context).deleteItem(items: receipt.items, item: item);
     }
   }
 
@@ -140,6 +153,14 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                     context.pop(value);
                   }
                 });
+              } else if (state is ReceiptDeletedSuccessfully) {
+                context.pop();
+                DialogService.showSuccessDialog(context: context, title: DELETE, message: DELETE_SUCCESS, onConfirm: () {
+                  context.pushNamedAndRemoveUntil(ReceiptListScreen.receiptSplit);
+                });
+              } else if (state is ReceiptDeletedFailed) {
+                context.pop();
+                DialogService.showErrorDialog(context: context, title: DELETE, message: DELETE_FAILED);
               }
             },
             builder: (context, state) {
@@ -159,10 +180,23 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                   return [
                     SliverToBoxAdapter(
                       child: Form(
+                        key: _formKey,
                         child: Column(
                           children: [
                             const SizedBox(height: 25.0),
-                            CustomTextFieldWidget(label: NAME, controller: _nameController),
+                            CustomTextFieldWidget(
+                              label: NAME,
+                              controller: _nameController,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return RECEIPT_NAME_NOT_EMPTY;
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                _formKey.currentState!.validate();
+                              },
+                            ),
                             CustomSpaceWidget(),
                             CustomTextFieldWidget(
                               controller: _dateController,
@@ -244,7 +278,16 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                     : [
                       IconButton(
                         onPressed: () {
-                          DialogService.showConfirmationDialog(context: context, title: DELETE_RECEIPT, message: DELETE_RECEIPT_MESSAGE, onConfirm: () {}, confirmText: DELETE, cancelText: CANCEL);
+                          DialogService.showConfirmationDialog(
+                            context: context,
+                            title: DELETE_RECEIPT,
+                            message: DELETE_RECEIPT_MESSAGE,
+                            onConfirm: () {
+                              BlocProvider.of<ReceiptFormCubit>(context).deleteForm(receipt.uid!);
+                            },
+                            confirmText: DELETE,
+                            cancelText: CANCEL,
+                          );
                         },
                         icon: Icon(Icons.delete_outline),
                       ),
@@ -344,13 +387,7 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                     visible: data != null,
                     child: InkWell(
                       onTap: () {
-                        if (isParticipant) {
-                          // Delete participant
-                          BlocProvider.of<ReceiptFormCubit>(context).deleteParticipant(participants: receipt.participants, participant: participant!);
-                        } else {
-                          // Delete item
-                          BlocProvider.of<ReceiptFormCubit>(context).deleteItem(items: receipt.items, item: item!);
-                        }
+                        _deleteItem(participant: participant, item: item);
                         return context.pop(null);
                       },
                       child: Container(

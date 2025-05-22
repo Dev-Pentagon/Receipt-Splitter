@@ -64,12 +64,18 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     }
   }
 
-  void updateParticipant({required List<Participant> participants, required Participant participant, required String receiptId}) async {
+  void updateParticipant({required List<Participant> participants, required List<MenuItem> items, required Participant participant, required String receiptId}) async {
     try {
       bool exists = participants.any((p) => p.uid == participant.uid);
       bool res = exists ? await repository.updateParticipant(participant) : await repository.addParticipant(participant, receiptId);
 
       if (res) {
+        for (MenuItem item in items) {
+          final index = item.participants.indexWhere((p) => p.uid == participant.uid);
+          if (index != -1) {
+            item.participants[index] = participant;
+          }
+        }
         List<Participant> newParticipants = updateItemById<Participant>(List.of(participants), participant, (p) => p.uid);
         emit(ParticipantUpdated(participants: newParticipants));
       } else {
@@ -80,12 +86,15 @@ class ReceiptFormCubit extends Cubit<ReceiptFormState> {
     }
   }
 
-  void deleteParticipant({required List<Participant> participants, required Participant participant}) async {
+  void deleteParticipant({required List<Participant> participants, required List<MenuItem> items, required Participant participant}) async {
     try {
       bool res = await repository.deleteParticipant(participant.uid);
 
       if (res) {
         List<Participant> newParticipants = List.from(participants)..removeWhere((p) => p.uid == participant.uid);
+        for (MenuItem item in items) {
+          item.participants.removeWhere((p) => p.uid == participant.uid);
+        }
         emit(ParticipantUpdated(participants: newParticipants));
       } else {
         emit(ReceiptFormSaveFailed(message: 'Failed to delete participant!'));
