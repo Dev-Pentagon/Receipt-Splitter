@@ -16,6 +16,7 @@ class ReceiptItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         context.pushNamed(ItemsAndPeopleScreen.itemsAndPeople, extra: receipt).then((value) {
           if (context.mounted) {
