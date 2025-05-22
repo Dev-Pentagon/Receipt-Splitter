@@ -22,8 +22,8 @@ Receipt Splitter is a mobile and web application that simplifies bill splitting 
 ## Tech Stack
 - **Framework:** Flutter 3.29.1
 - **Language:** Dart 3.7.0
-- **State Management:** TBD
-- **Storage:** TBD
+- **State Management:** Flutter BLOC
+- **Storage:** SQFlite
 - **Developer Tools:** DevTools 2.42.2
 
 ## Installation
