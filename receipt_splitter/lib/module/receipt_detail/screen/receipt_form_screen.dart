@@ -38,6 +38,7 @@ class ReceiptFormScreen extends StatefulWidget {
 class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
+  final _dialogFormKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -155,9 +156,14 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                 });
               } else if (state is ReceiptDeletedSuccessfully) {
                 context.pop();
-                DialogService.showSuccessDialog(context: context, title: DELETE, message: DELETE_SUCCESS, onConfirm: () {
-                  context.pushNamedAndRemoveUntil(ReceiptListScreen.receiptSplit);
-                });
+                DialogService.showSuccessDialog(
+                  context: context,
+                  title: DELETE,
+                  message: DELETE_SUCCESS,
+                  onConfirm: () {
+                    context.pushNamedAndRemoveUntil(ReceiptListScreen.receiptSplit);
+                  },
+                );
               } else if (state is ReceiptDeletedFailed) {
                 context.pop();
                 DialogService.showErrorDialog(context: context, title: DELETE, message: DELETE_FAILED);
@@ -321,74 +327,90 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).viewInsets.bottom + 16, top: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(height: 10),
-              (isParticipant)
-                  ? CustomTextFieldWidget(label: NAME, controller: participantNameController)
-                  : Column(
-                    children: [
-                      CustomTextFieldWidget(label: NAME, controller: nameController),
-                      const SizedBox(height: 16),
-                      CustomTextFieldWidget(label: QTY, controller: qtyController),
-                      const SizedBox(height: 16),
-                      CustomTextFieldWidget(label: PRICE, controller: priceController),
-                    ],
-                  ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      if (isParticipant) {
-                        // Update participant data
-                        if (participant == null) {
-                          participant = await Participant.create(name: participantNameController.text);
-                        } else {
-                          participant = participant?.copyWith(name: participantNameController.text);
+          child: Form(
+            key: _dialogFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const SizedBox(height: 10),
+                (isParticipant)
+                    ? CustomTextFieldWidget(
+                      label: NAME,
+                      controller: participantNameController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Name cannot be empty';
                         }
-                        if (context.mounted) {
-                          Navigator.pop(context, participant); // Return updated participant
-                        }
-                      } else {
-                        // Update item data
-                        if (item == null) {
-                          // item = MenuItem(id: 'ITM', name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
-                          item = await MenuItem.create(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
-                        } else {
-                          // Update existing item
-                          item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context, item); // Return updated item
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 107,
-                      height: 40,
-                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.save_alt, color: Theme.of(context).colorScheme.onTertiary),
-                          const SizedBox(width: 10),
-                          Text(SAVE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-                        ],
-                      ),
+                        return null;
+                      },
+                    )
+                    : Column(
+                      spacing: 16,
+                      children: [
+                        CustomTextFieldWidget(
+                          label: NAME,
+                          controller: nameController,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Name cannot be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomTextFieldWidget(
+                          label: QTY,
+                          controller: qtyController,
+                          validator: (value) {
+                            final qty = int.tryParse(value ?? '');
+                            if (qty == null || qty <= 0) {
+                              return 'Quantity must be greater than 0';
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomTextFieldWidget(
+                          label: PRICE,
+                          controller: priceController,
+                          validator: (value) {
+                            final price = double.tryParse(value ?? '');
+                            if (price == null || price < 0) {
+                              return 'Price cannot be negative';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Visibility(
-                    visible: data != null,
-                    child: InkWell(
-                      onTap: () {
-                        _deleteItem(participant: participant, item: item);
-                        return context.pop(null);
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        if (!_dialogFormKey.currentState!.validate()) return;
+
+                        if (isParticipant) {
+                          // Update participant data
+                          if (participant == null) {
+                            participant = await Participant.create(name: participantNameController.text);
+                          } else {
+                            participant = participant?.copyWith(name: participantNameController.text);
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context, participant); // Return updated participant
+                          }
+                        } else {
+                          // Update item data
+                          if (item == null) {
+                            item = await MenuItem.create(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? 0, price: double.tryParse(priceController.text) ?? 0.0);
+                          } else {
+                            item = item?.copyWith(name: nameController.text, quantity: int.tryParse(qtyController.text) ?? item!.quantity, price: double.tryParse(priceController.text) ?? item!.price);
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context, item); // Return updated item
+                          }
+                        }
                       },
                       child: Container(
                         width: 107,
@@ -398,17 +420,41 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> with SingleTicker
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
+                            Icon(Icons.save_alt, color: Theme.of(context).colorScheme.onTertiary),
                             const SizedBox(width: 10),
-                            Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+                            Text(SAVE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 16),
+                    Visibility(
+                      visible: data != null,
+                      child: InkWell(
+                        onTap: () {
+                          _deleteItem(participant: participant, item: item);
+                          return context.pop(null);
+                        },
+                        child: Container(
+                          width: 107,
+                          height: 40,
+                          decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary, borderRadius: BorderRadius.all(Radius.circular(100))),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.delete, color: Theme.of(context).colorScheme.onTertiary),
+                              const SizedBox(width: 10),
+                              Text(DELETE, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
