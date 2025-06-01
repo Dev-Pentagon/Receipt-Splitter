@@ -44,13 +44,11 @@ class ItemsAndPeopleScreen extends StatelessWidget {
                 listener: (context, state) {
                   if (state is AlreadyLinked) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(PARTICIPANT_ALREADY_LINKED)));
+                  } else if (state is ItemsAndPeopleUpdated) {
+                    receipt.items = state.items;
                   }
                 },
                 builder: (context, state) {
-                  if (state is ItemsAndPeopleUpdated) {
-                    receipt.items = state.items;
-                  }
-
                   if (receipt.items.isEmpty) {
                     return const EmptyScreen(title: NO_ITEMS);
                   } else {
