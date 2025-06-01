@@ -8,35 +8,37 @@ class DraggableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable<Participant>(
-      data: participant,
-      delay: Duration(milliseconds: 200),
-      feedback: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          _ParticipantCard(participant: participant),
-          Positioned(
-            right: -5,
-            top: -5,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Icon(
-                Icons.add_circle_outline,
-                color: Theme.of(context).colorScheme.onPrimary,
-                size: 20,
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Drag over an item to link this participant', style: TextStyle(color: Theme.of(context).colorScheme.onTertiary, fontSize: 16)),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+            backgroundColor: Theme.of(context).colorScheme.tertiary,
+          ),
+        );
+      },
+      child: LongPressDraggable<Participant>(
+        data: participant,
+        delay: Duration(milliseconds: 200),
+        feedback: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            _ParticipantCard(participant: participant),
+            Positioned(
+              right: -5,
+              top: -5,
+              child: Container(
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(20)),
+                child: Icon(Icons.add_circle_outline, color: Theme.of(context).colorScheme.onPrimary, size: 20),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        childWhenDragging: _ParticipantCard(participant: participant, opacity: 0.75),
+        child: _ParticipantCard(participant: participant),
       ),
-      childWhenDragging: _ParticipantCard(
-        participant: participant,
-        opacity: 0.75,
-      ),
-      child: _ParticipantCard(participant: participant),
     );
   }
 }
@@ -53,23 +55,14 @@ class _ParticipantCard extends StatelessWidget {
       child: Container(
         width: 100,
         height: 120,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(20),
-        ),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 8.5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ParticipantAvatar(participant: participant),
             const SizedBox(height: 6),
-            Text(
-              participant.name,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Text(participant.name, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface, overflow: TextOverflow.ellipsis)),
           ],
         ),
       ),
