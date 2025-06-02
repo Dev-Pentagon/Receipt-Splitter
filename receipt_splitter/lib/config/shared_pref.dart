@@ -1,35 +1,35 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:receipt_splitter/config/app_config.dart';
+import 'package:receipt_splitter/model/currency.dart';
+import 'package:receipt_splitter/util/format_currency_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/currency.dart';
-import '../util/format_currency_util.dart';
+import 'app_config.dart';
 
 class Preferences {
+  static final Preferences _instance = Preferences._internal();
   late SharedPreferences _prefs;
-  Preferences._private();
-
-  static final _instance = Preferences._private();
 
   factory Preferences() {
     return _instance;
   }
 
+  Preferences._internal();
+
   Future<void> initPreferences() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  final String _isDarkMode = 'isDarkMode';
-  final String _currencyCode = 'currencyCode';
+  static const String _isDarkMode = 'is_dark_mode';
+  static const String _currencyCode = 'currency_code';
+  static const String _onboardingCompletedKey = 'onboarding_completed';
 
   ThemeMode getThemeMode() {
     bool? darkModePref = _prefs.getBool(_isDarkMode);
 
     if (darkModePref == null) {
-      final brightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
       final bool isDarkMode = brightness == Brightness.dark;
       setDarkMode(isDarkMode);
       darkModePref = isDarkMode;
@@ -48,9 +48,7 @@ class Preferences {
       setCurrencyCode(defaultCurrency);
     }
 
-    return jsonString != null
-        ? Currency.from(json: jsonDecode(jsonString))
-        : defaultCurrency;
+    return jsonString != null ? Currency.from(json: jsonDecode(jsonString)) : defaultCurrency;
   }
 
   void setCurrencyCode(Currency currency) {
@@ -58,11 +56,11 @@ class Preferences {
     _prefs.setString(_currencyCode, jsonEncode(currency.toJson()));
   }
 
-  void clear() {
-    _prefs.clear();
+  bool isOnboardingCompleted() {
+    return _prefs.getBool(_onboardingCompletedKey) ?? false;
   }
 
-  void reload() {
-    _prefs.reload();
+  Future<void> setOnboardingCompleted(bool completed) async {
+    await _prefs.setBool(_onboardingCompletedKey, completed);
   }
 }

@@ -15,12 +15,11 @@ class CurrencyListView extends StatefulWidget {
 
 class _CurrencyListViewState extends State<CurrencyListView> {
   final CurrencyService _currencyService = CurrencyService();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   late List<Currency> _filteredList;
   late List<Currency> _currencyList;
-  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(
-    CurrencyService().findByCode('MMK'),
-  );
+  ValueNotifier<Currency?> selectedCurrency = ValueNotifier(CurrencyService().findByCode('MMK'));
   TextEditingController? _searchController;
   final ScrollController _scrollController = ScrollController();
 
@@ -30,17 +29,37 @@ class _CurrencyListViewState extends State<CurrencyListView> {
     Currency currencyCode = Preferences().getCurrencyCode();
     selectedCurrency.value = _currencyService.findByCode(currencyCode.code);
     _currencyList = _currencyService.getAll();
-
     _filteredList = <Currency>[];
-
     _filteredList.addAll(_currencyList);
+
+    // Auto-scroll to selected currency after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelectedCurrency();
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
     _searchController?.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToSelectedCurrency() {
+    if (selectedCurrency.value != null) {
+      final selectedIndex = _filteredList.indexWhere((currency) => currency.code == selectedCurrency.value!.code);
+
+      if (selectedIndex != -1 && _scrollController.hasClients) {
+        // Calculate approximate position (assuming each item is ~72px height)
+        final position = selectedIndex * 72.0;
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        final targetPosition = position > maxScroll ? maxScroll : position;
+
+        _scrollController.animateTo(targetPosition, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      }
+    }
   }
 
   @override
@@ -49,6 +68,7 @@ class _CurrencyListViewState extends State<CurrencyListView> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Currency', style: Theme.of(context).textTheme.titleLarge),
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).pop(selectedCurrency.value)),
       ),
       body: LayoutBuilderWidget(
         child: Column(
@@ -56,37 +76,26 @@ class _CurrencyListViewState extends State<CurrencyListView> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 14,
-                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                 hintText: 'Search currency',
-                suffixIcon: Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                suffixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 16,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
               ),
               onChanged: _filterSearchResults,
             ),
-            SizedBox(height: 15),
+
+            const SizedBox(height: 15),
+
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 controller: _scrollController,
-                children: [
-                  ..._filteredList.map<Widget>(
-                    (currency) => _listRow(currency),
-                  ),
-                ],
+                itemCount: _filteredList.length,
+                itemBuilder: (context, index) {
+                  return _listRow(_filteredList[index]);
+                },
               ),
             ),
           ],
@@ -99,54 +108,69 @@ class _CurrencyListViewState extends State<CurrencyListView> {
     return ValueListenableBuilder(
       valueListenable: selectedCurrency,
       builder: (context, select, child) {
-        return InkWell(
-          onTap: () {
-            selectedCurrency.value = currency;
-            Preferences().setCurrencyCode(currency);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 16.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              spacing: 16,
-              children: <Widget>[
-                _flagWidget(currency),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        final isSelected = select?.code == currency.code;
+
+        return AnimatedContainer(
+          key: _listKey,
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: isSelected ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3) : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: isSelected ? Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5), width: 1) : null,
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () {
+              selectedCurrency.value = currency;
+              Preferences().setCurrencyCode(currency);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 16,
+                children: <Widget>[
+                  _flagWidget(currency),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          currency.code,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, color: isSelected ? Theme.of(context).colorScheme.primary : null),
+                        ),
+                        Text(currency.name, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isSelected ? Theme.of(context).colorScheme.primary : null)),
+                      ],
+                    ),
+                  ),
+                  Row(
                     children: [
                       Text(
-                        currency.code,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        currency.symbol,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, color: isSelected ? Theme.of(context).colorScheme.primary : null),
                       ),
-                      Text(
-                        currency.name,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        // : titleTextStyle,
+                      const SizedBox(width: 8),
+                      AnimatedScale(
+                        scale: isSelected ? 1.1 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Radio<Currency>(
+                          value: currency,
+                          groupValue: select,
+                          onChanged: (Currency? value) {
+                            selectedCurrency.value = value;
+                            Preferences().setCurrencyCode(value!);
+                          },
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      currency.symbol,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    Radio(
-                      value: currency,
-                      groupValue: select,
-                      onChanged: (Currency? value) {
-                        selectedCurrency.value = value;
-                        Preferences().setCurrencyCode(value!);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -156,13 +180,10 @@ class _CurrencyListViewState extends State<CurrencyListView> {
 
   Widget _flagWidget(Currency currency) {
     if (currency.flag == null) {
-      return Text('NF', style: TextStyle(fontSize: 25));
+      return const Text('NF', style: TextStyle(fontSize: 25));
     }
 
-    return Text(
-      CurrencyUtils.currencyToEmoji(currency),
-      style: TextStyle(fontSize: 25),
-    );
+    return Text(CurrencyUtils.currencyToEmoji(currency), style: const TextStyle(fontSize: 25));
   }
 
   void _filterSearchResults(String query) {
@@ -171,16 +192,15 @@ class _CurrencyListViewState extends State<CurrencyListView> {
     if (query.isEmpty) {
       searchResult.addAll(_currencyList);
     } else {
-      searchResult =
-          _currencyList
-              .where(
-                (c) =>
-                    c.name.toLowerCase().contains(query.toLowerCase().trim()) ||
-                    c.code.toLowerCase().contains(query.toLowerCase().trim()),
-              )
-              .toList();
+      searchResult = _currencyList.where((c) => c.name.toLowerCase().contains(query.toLowerCase().trim()) || c.code.toLowerCase().contains(query.toLowerCase().trim())).toList();
     }
 
-    setState(() => _filteredList = searchResult);
+    setState(() {
+      _filteredList = searchResult;
+      // Re-scroll to selected currency after filtering
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelectedCurrency();
+      });
+    });
   }
 }
